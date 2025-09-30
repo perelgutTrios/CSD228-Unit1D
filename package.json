@@ -1,0 +1,39 @@
+{
+  "name": "simple-calculator-tests",
+  "version": "1.0.0",
+  "description": "Test suite for Simple Calculator Application",
+  "main": "script.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage --coverageReporters=text-lcov --coverageReporters=html",
+    "test:ui": "jest --testPathPattern=ui",
+    "test:unit": "jest --testPathPattern=unit",
+    "test:integration": "jest --testPathPattern=integration",
+    "test:e2e": "jest --testPathPattern=e2e --runInBand",
+    "test:all": "npm run test:unit && npm run test:integration && npm run test:ui",
+    "test:ci": "jest --coverage --watchAll=false --ci",
+    "test:debug": "jest --detectOpenHandles --forceExit --verbose"
+  },
+  "keywords": ["calculator", "javascript", "testing", "jest"],
+  "author": "CSD228 Student",
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "puppeteer": "^21.3.0",
+    "@testing-library/jest-dom": "^6.1.4"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "setupFilesAfterEnv": ["<rootDir>/tests/setup.js"],
+    "collectCoverageFrom": [
+      "script.js",
+      "!node_modules/**"
+    ],
+    "coverageReporters": ["text", "lcov", "html"],
+    "testMatch": [
+      "<rootDir>/tests/**/*.test.js"
+    ]
+  }
+}
