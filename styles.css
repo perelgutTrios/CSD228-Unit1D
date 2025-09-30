@@ -1,190 +1,231 @@
-/* Calculator Styles */
+/* ======================================
+   SIMPLE CALCULATOR APPLICATION STYLES
+   ====================================== */
+
+/* Universal reset to ensure consistent styling across browsers */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+    margin: 0;              /* Remove default margins */
+    padding: 0;             /* Remove default padding */
+    box-sizing: border-box; /* Include padding and border in element's total width/height */
 }
 
+/* Main body styling - creates the overall page layout */
 body {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Arial', sans-serif;  /* Set primary font */
+    /* Create gradient background from blue to purple */
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
+    min-height: 100vh;      /* Ensure full viewport height */
+    display: flex;          /* Use flexbox for centering */
+    justify-content: center; /* Center horizontally */
+    align-items: center;    /* Center vertically */
+    padding: 20px;          /* Add padding for mobile devices */
 }
 
+/* Main calculator container - houses the entire calculator */
 .calculator {
-    background: #2c3e50;
-    border-radius: 20px;
-    padding: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    max-width: 350px;
-    width: 100%;
+    background: #2c3e50;               /* Dark blue-gray background */
+    border-radius: 20px;               /* Rounded corners for modern look */
+    padding: 20px;                     /* Internal spacing */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); /* Drop shadow for depth */
+    max-width: 350px;                  /* Maximum width for larger screens */
+    width: 100%;                       /* Full width on smaller screens */
 }
 
+/* Display area containing the screen */
 .display {
-    background: #1a252f;
-    border-radius: 10px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
+    background: #1a252f;              /* Darker background for contrast */
+    border-radius: 10px;              /* Rounded corners */
+    padding: 20px;                    /* Internal padding */
+    margin-bottom: 20px;              /* Space between display and buttons */
+    box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3); /* Inset shadow for depth */
 }
 
+/* The actual display screen showing numbers and results */
 #screen {
-    color: #00ff41;
-    font-size: 2.5em;
-    font-weight: bold;
-    text-align: right;
-    min-height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    font-family: 'Courier New', monospace;
-    letter-spacing: 2px;
-    overflow: hidden;
-    word-break: break-all;
+    color: #00ff41;                   /* Green text (classic calculator color) */
+    font-size: 2.5em;                /* Large text size */
+    font-weight: bold;               /* Bold text for readability */
+    text-align: right;               /* Right-align numbers (calculator standard) */
+    min-height: 60px;                /* Minimum height to prevent layout shifts */
+    display: flex;                   /* Flexbox for alignment */
+    align-items: center;             /* Vertically center text */
+    justify-content: flex-end;       /* Right-align content */
+    font-family: 'Courier New', monospace; /* Monospace font for consistent digit width */
+    letter-spacing: 2px;             /* Space between characters */
+    overflow: hidden;                /* Hide text that exceeds container */
+    word-break: break-all;           /* Break long words if necessary */
 }
 
+/* Button container using CSS Grid for precise layout */
 .buttons {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(5, 1fr);
-    gap: 15px;
+    display: grid;                   /* Use CSS Grid layout */
+    grid-template-columns: repeat(4, 1fr); /* 4 equal columns */
+    grid-template-rows: repeat(5, 1fr);    /* 5 equal rows */
+    gap: 15px;                       /* Space between buttons */
 }
 
+/* Base button styling applied to all buttons */
 .btn {
-    padding: 20px;
-    font-size: 1.4em;
-    font-weight: bold;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    min-height: 60px;
+    padding: 20px;                   /* Internal button padding */
+    font-size: 1.4em;               /* Button text size */
+    font-weight: bold;               /* Bold text */
+    border: none;                    /* Remove default border */
+    border-radius: 10px;             /* Rounded button corners */
+    cursor: pointer;                 /* Pointer cursor on hover */
+    transition: all 0.3s ease;      /* Smooth animations */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Button shadow */
+    min-height: 60px;                /* Minimum button height */
 }
 
-/* Reset button spans 2 columns */
+/* ======================================
+   BUTTON STYLING BY TYPE
+   ====================================== */
+
+/* Reset button - spans 2 columns in grid, red color for importance */
 .reset-btn {
-    grid-column: span 2;
-    background: #e74c3c;
-    color: white;
+    grid-column: span 2;             /* Span across 2 columns */
+    background: #e74c3c;            /* Red background */
+    color: white;                   /* White text */
 }
 
+/* Reset button hover effect - darker red with lift animation */
 .reset-btn:hover {
-    background: #c0392b;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    background: #c0392b;            /* Darker red on hover */
+    transform: translateY(-2px);    /* Lift button up slightly */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Enhanced shadow */
 }
 
+/* Reset button active state - pressed down effect */
 .reset-btn:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transform: translateY(0);       /* Return to normal position */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Reduced shadow */
 }
 
-/* Operator buttons */
+/* Operator buttons (+ and -) - orange color scheme */
 .operator-btn {
-    background: #f39c12;
-    color: white;
+    background: #f39c12;            /* Orange background */
+    color: white;                   /* White text */
 }
 
+/* Operator button hover effect */
 .operator-btn:hover {
-    background: #e67e22;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    background: #e67e22;            /* Darker orange on hover */
+    transform: translateY(-2px);    /* Lift effect */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Enhanced shadow */
 }
 
+/* Operator button active state */
 .operator-btn:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transform: translateY(0);       /* Return to normal position */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Reduced shadow */
 }
 
+/* Selected operator state - shows which operator is currently active */
 .operator-btn.selected {
-    background: #d68910;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+    background: #d68910;            /* Even darker orange */
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3); /* Inset shadow for pressed look */
 }
 
-/* Number buttons */
+/* Number buttons (0-9) - gray color scheme */
 .number-btn {
-    background: #34495e;
-    color: white;
+    background: #34495e;            /* Dark gray background */
+    color: white;                   /* White text */
 }
 
+/* Number button hover effect */
 .number-btn:hover {
-    background: #2c3e50;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    background: #2c3e50;            /* Darker gray on hover */
+    transform: translateY(-2px);    /* Lift effect */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Enhanced shadow */
 }
 
+/* Number button active state */
 .number-btn:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transform: translateY(0);       /* Return to normal position */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Reduced shadow */
 }
 
-/* Calculate button spans 3 rows */
+/* Calculate button - spans 3 rows vertically, green color */
 .calculate-btn {
-    grid-column: 4;
-    grid-row: 2 / 5;
-    background: #27ae60;
-    color: white;
-    writing-mode: vertical-lr;
-    text-orientation: mixed;
+    grid-column: 4;                 /* Position in column 4 */
+    grid-row: 2 / 5;               /* Span from row 2 to row 5 (3 rows total) */
+    background: #27ae60;            /* Green background */
+    color: white;                   /* White text */
+    writing-mode: vertical-lr;      /* Vertical text orientation */
+    text-orientation: mixed;        /* Mixed text orientation for readability */
 }
 
+/* Calculate button hover effect - uses horizontal transform due to vertical layout */
 .calculate-btn:hover {
-    background: #229954;
-    transform: translateX(-2px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    background: #229954;            /* Darker green on hover */
+    transform: translateX(-2px);    /* Move left slightly (horizontal due to vertical layout) */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Enhanced shadow */
 }
 
+/* Calculate button active state */
 .calculate-btn:active {
-    transform: translateX(0);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transform: translateX(0);       /* Return to normal position */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Reduced shadow */
 }
 
-/* Zero button spans 2 columns */
+/* Zero button - spans 2 columns horizontally */
 .zero-btn {
-    grid-column: span 2;
+    grid-column: span 2;            /* Span across 2 columns */
 }
 
-/* Error and overflow states */
+/* ======================================
+   ERROR AND OVERFLOW DISPLAY STATES
+   ====================================== */
+
+/* Error state styling - displayed when calculation errors occur */
 .error {
-    color: #e74c3c !important;
-    font-size: 2em !important;
+    color: #e74c3c !important;      /* Red text color (overrides default) */
+    font-size: 2em !important;      /* Smaller font to fit "ERROR" text */
 }
 
+/* Overflow state styling - displayed when numbers exceed display limits */
 .overflow {
-    color: #f39c12 !important;
-    font-size: 1.8em !important;
+    color: #f39c12 !important;      /* Orange text color (overrides default) */
+    font-size: 1.8em !important;    /* Smaller font to fit "OVERFLOW" text */
 }
 
-/* Responsive design */
+/* ======================================
+   RESPONSIVE DESIGN FOR MOBILE DEVICES
+   ====================================== */
+
+/* Media query for screens smaller than 480px (mobile phones) */
 @media (max-width: 480px) {
+    /* Adjust calculator container for smaller screens */
     .calculator {
-        margin: 10px;
-        padding: 15px;
+        margin: 10px;               /* Reduce margin */
+        padding: 15px;              /* Reduce padding */
     }
     
+    /* Reduce screen font size for mobile */
     #screen {
-        font-size: 2em;
-        min-height: 50px;
+        font-size: 2em;             /* Smaller font size */
+        min-height: 50px;           /* Reduce minimum height */
     }
     
+    /* Reduce button size for mobile */
     .btn {
-        padding: 15px;
-        font-size: 1.2em;
-        min-height: 50px;
+        padding: 15px;              /* Reduce button padding */
+        font-size: 1.2em;           /* Smaller font size */
+        min-height: 50px;           /* Reduce minimum height */
     }
     
+    /* Adjust calculate button font for vertical text */
     .calculate-btn {
-        font-size: 1em;
+        font-size: 1em;             /* Smaller font for vertical text */
     }
 }
 
-/* Button press animation */
+/* ======================================
+   BUTTON PRESS ANIMATION
+   ====================================== */
+
+/* Animation class applied when buttons are pressed */
 .btn-pressed {
-    transform: scale(0.95);
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+    transform: scale(0.95);         /* Slightly shrink button */
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3); /* Inset shadow for pressed effect */
 }

@@ -1,41 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Set character encoding to UTF-8 for proper text display -->
     <meta charset="UTF-8">
+    
+    <!-- Configure viewport for responsive design on mobile devices -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Page title displayed in browser tab -->
     <title>Simple Calculator</title>
+    
+    <!-- Link to external CSS stylesheet for styling -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- Main calculator container -->
     <div class="calculator">
+        <!-- Display section showing current value, results, or error messages -->
         <div class="display">
+            <!-- Screen element where numbers and results are displayed -->
+            <!-- Shows up to 8 digits for positive numbers or "-" + 7 digits for negative -->
             <div id="screen">0</div>
         </div>
         
+        <!-- Button container using CSS Grid layout -->
         <div class="buttons">
-            <!-- First row: Reset button spans 2 columns -->
+            <!-- Top row: Reset button (spans 2 columns) and operator buttons -->
             <button class="btn reset-btn" id="reset">Reset</button>
             <button class="btn operator-btn" id="plus">+</button>
             <button class="btn operator-btn" id="minus">-</button>
             
-            <!-- Number pad -->
+            <!-- Number pad layout (3x3 grid for digits 1-9, plus 0 at bottom) -->
+            <!-- Row 1: 7, 8, 9 with Calculate button spanning multiple rows -->
             <button class="btn number-btn" id="num7">7</button>
             <button class="btn number-btn" id="num8">8</button>
             <button class="btn number-btn" id="num9">9</button>
+            <!-- Calculate button spans 3 rows vertically (positioned on the right) -->
             <button class="btn calculate-btn" id="calculate" rowspan="3">Calculate</button>
             
+            <!-- Row 2: 4, 5, 6 -->
             <button class="btn number-btn" id="num4">4</button>
             <button class="btn number-btn" id="num5">5</button>
             <button class="btn number-btn" id="num6">6</button>
             
+            <!-- Row 3: 1, 2, 3 -->
             <button class="btn number-btn" id="num1">1</button>
             <button class="btn number-btn" id="num2">2</button>
             <button class="btn number-btn" id="num3">3</button>
             
+            <!-- Bottom row: 0 button spans 2 columns -->
             <button class="btn number-btn zero-btn" id="num0">0</button>
         </div>
     </div>
     
+    <!-- Load JavaScript file for calculator functionality -->
     <script src="script.js"></script>
 </body>
 </html>
