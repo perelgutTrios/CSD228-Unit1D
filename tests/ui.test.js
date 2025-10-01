@@ -3,20 +3,8 @@
  * Tests user interactions, button clicks, and visual feedback
  */
 
-const fs = require('fs');
-const path = require('path');
-
-// Load calculator script
-const scriptPath = path.join(__dirname, '..', 'script.js');
-const scriptContent = fs.readFileSync(scriptPath, 'utf8');
-const modifiedScript = scriptContent.replace(
-  /document\.addEventListener\('DOMContentLoaded'[\s\S]*?\}\);/,
-  ''
-).replace(
-  /document\.addEventListener\('keydown'[\s\S]*?\}\);/,
-  ''
-);
-eval(modifiedScript);
+// Import the Calculator class
+const Calculator = require('../script.js');
 
 describe('Calculator UI Tests', () => {
   let calculator;

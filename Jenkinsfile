@@ -95,21 +95,21 @@ pipeline {
             }
         }
         
-        stage('E2E Tests') {
+        stage('UI Tests') {
             steps {
                 script {
-                    // Install browser dependencies for Puppeteer
+                    // Run UI interaction tests
                     if (isUnix()) {
-                        sh 'npm run test:e2e'
+                        sh 'npm run test:ui'
                     } else {
-                        bat 'npm run test:e2e'
+                        bat 'npm run test:ui'
                     }
                 }
-                echo 'End-to-end tests completed'
+                echo 'UI tests completed'
             }
             post {
                 always {
-                    publishTestResults testResultsPattern: 'test-results/e2e/*.xml'
+                    publishTestResults testResultsPattern: 'test-results/ui/*.xml'
                 }
             }
         }

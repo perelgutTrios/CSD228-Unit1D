@@ -305,7 +305,7 @@ Unit 1D/
 
 ### Technology Stack
 - **Frontend**: HTML5, CSS3, JavaScript (ES6+)
-- **Testing**: Jest 29.7.0, Puppeteer 21.3.0, JSDoc
+- **Testing**: Jest 29.7.0, JSDoc
 - **CI/CD**: Jenkins Pipeline, NPM Scripts
 - **Version Control**: Git with GitHub integration
 - **Deployment**: Multi-environment (Dev/Staging/Production)
@@ -381,8 +381,8 @@ Testing Environment Stack
 ┌─────────────────────────────────────────────────────────┐
 │                Test Framework Layer                     │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────┐  │
-│  │    Jest     │  │  Puppeteer  │  │    Manual       │  │
-│  │ Unit/Integ  │  │    E2E      │  │   Testing       │  │
+│  │    Jest     │  │    Jest     │  │    Manual       │  │
+│  │Unit/Integr. │  │     UI      │  │   Testing       │  │
 │  └─────────────┘  └─────────────┘  └─────────────────┘  │
 └─────────────────────────────────────────────────────────┘
 ┌─────────────────────────────────────────────────────────┐
@@ -1079,10 +1079,10 @@ pipeline {
             // Test accessibility features
         }
         
-        stage('E2E Tests') {
-            // Execute Puppeteer browser tests
-            // Cross-browser compatibility testing
-            // Performance benchmarking
+        stage('UI Tests') {
+            // Execute UI interaction tests
+            // DOM manipulation validation
+            // Visual state testing
         }
         
         // 5. Coverage Analysis

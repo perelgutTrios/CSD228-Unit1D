@@ -3,20 +3,8 @@
  * Tests component interactions and complete user workflows
  */
 
-const fs = require('fs');
-const path = require('path');
-
-// Load calculator script
-const scriptPath = path.join(__dirname, '..', 'script.js');
-const scriptContent = fs.readFileSync(scriptPath, 'utf8');
-const modifiedScript = scriptContent.replace(
-  /document\.addEventListener\('DOMContentLoaded'[\s\S]*?\}\);/,
-  ''
-).replace(
-  /document\.addEventListener\('keydown'[\s\S]*?\}\);/,
-  ''
-);
-eval(modifiedScript);
+// Import the Calculator class
+const Calculator = require('../script.js');
 
 describe('Calculator Integration Tests', () => {
   let calculator;

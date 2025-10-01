@@ -3,25 +3,8 @@
  * Tests individual methods and functionality in isolation
  */
 
-// Import the Calculator class (we'll need to modify script.js to make it exportable)
-const fs = require('fs');
-const path = require('path');
-
-// Read and evaluate the calculator script
-const scriptPath = path.join(__dirname, '..', 'script.js');
-const scriptContent = fs.readFileSync(scriptPath, 'utf8');
-
-// Remove the DOMContentLoaded event listener for testing
-const modifiedScript = scriptContent.replace(
-  /document\.addEventListener\('DOMContentLoaded'[\s\S]*?\}\);/,
-  ''
-).replace(
-  /document\.addEventListener\('keydown'[\s\S]*?\}\);/,
-  ''
-);
-
-// Evaluate the script to make Calculator class available
-eval(modifiedScript);
+// Import the Calculator class
+const Calculator = require('../script.js');
 
 describe('Calculator Unit Tests', () => {
   let calculator;
@@ -71,8 +54,8 @@ describe('Calculator Unit Tests', () => {
 
     test('TC1.5: Overflow prevention works correctly', () => {
       // Test wouldOverflow method directly
-      expect(calculator.wouldOverflow(99999999)).toBe(true);  // 8 digits is max
-      expect(calculator.wouldOverflow(12345678)).toBe(false); // 8 digits is OK
+      expect(calculator.wouldOverflow(99999999)).toBe(false); // 8 digits is max, so this is OK
+      expect(calculator.wouldOverflow(123456789)).toBe(true); // 9 digits should overflow
       expect(calculator.wouldOverflow(-1234567)).toBe(false); // 7 digits + minus is OK
       expect(calculator.wouldOverflow(-12345678)).toBe(true); // 8 digits + minus is too much
     });

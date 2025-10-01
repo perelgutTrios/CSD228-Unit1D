@@ -229,6 +229,7 @@ class Calculator {
      */
     displayOverflow() {
         this.screen.textContent = 'OVERFLOW';      // Show overflow message
+        this.screen.classList.remove('error');     // Clear any previous error state
         this.screen.classList.add('overflow');     // Apply overflow styling
         
         // Reset calculator state after overflow
@@ -244,6 +245,7 @@ class Calculator {
      */
     displayError() {
         this.screen.textContent = 'ERROR';         // Show error message
+        this.screen.classList.remove('overflow'); // Clear any previous overflow state
         this.screen.classList.add('error');       // Apply error styling
         
         // Reset calculator state after error
@@ -340,3 +342,9 @@ document.addEventListener('keydown', (event) => {
         document.getElementById('reset').click();      // Simulate reset button click
     }
 });
+
+// Export Calculator class for Node.js testing environment (if module.exports exists)
+// This allows the same file to work in both browser and Node.js environments
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = Calculator;
+}

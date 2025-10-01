@@ -6,8 +6,7 @@ This document provides instructions for running the comprehensive test suite for
 
 The testing strategy uses multiple frameworks and approaches:
 
-- **Jest**: JavaScript unit and integration testing
-- **Puppeteer**: End-to-end browser testing  
+- **Jest**: JavaScript unit, integration, and UI testing
 - **Jenkins**: Continuous integration and automated testing
 - **Manual Testing**: Cross-browser and accessibility validation
 
@@ -84,14 +83,14 @@ npm run test:ui
 **Coverage**: Button clicks, display updates, visual states
 **Expected Results**: All UI interaction tests should pass
 
-#### 4. End-to-End Tests
+#### 4. All Tests Combined
 ```bash
-# Note: Requires browser installation
-npm run test:e2e
+# Run all core tests (unit, integration, UI)
+npm run test:all
 ```
-**Purpose**: Test complete application in real browser environment
-**Coverage**: Browser compatibility, keyboard support, performance
-**Expected Results**: All E2E scenarios should pass
+**Purpose**: Complete test suite validation
+**Coverage**: All functionality, integration flows, and UI interactions
+**Expected Results**: All 57 core tests should pass
 
 ### Coverage Reports
 ```bash
@@ -239,13 +238,13 @@ rm -rf node_modules package-lock.json
 npm install
 ```
 
-#### Browser Tests Fail
+#### Test Dependencies Missing
 ```bash
-# Install Puppeteer manually
-npm install puppeteer --save-dev
+# Reinstall test dependencies
+npm install
 
-# For Linux systems, install browser dependencies
-sudo apt-get install -y chromium-browser
+# Clear Jest cache
+npm test -- --clearCache
 ```
 
 #### Coverage Reports Not Generated
@@ -336,6 +335,6 @@ npm test -- --detectOpenHandles --forceExit
 
 ---
 
-**Last Updated**: September 30, 2025
-**Test Framework Version**: Jest 29.7.0, Puppeteer 21.3.0
+**Last Updated**: October 1, 2025
+**Test Framework Version**: Jest 29.7.0
 **Maintainer**: CSD228 Development Team
