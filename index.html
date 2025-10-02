@@ -7,8 +7,17 @@
     <!-- Configure viewport for responsive design on mobile devices -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
+    <!-- PWA Configuration -->
+    <meta name="theme-color" content="#2196F3">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Calculator">
+    
     <!-- Page title displayed in browser tab -->
     <title>Simple Calculator</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
     
     <!-- Link to external CSS stylesheet for styling -->
     <link rel="stylesheet" href="styles.css">
@@ -55,5 +64,20 @@
     
     <!-- Load JavaScript file for calculator functionality -->
     <script src="script.js"></script>
+    
+    <!-- PWA Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(function(registration) {
+                        console.log('ServiceWorker registration successful');
+                    })
+                    .catch(function(err) {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+    </script>
 </body>
 </html>

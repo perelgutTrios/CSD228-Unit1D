@@ -6,6 +6,8 @@
   "scripts": {
     "start": "echo Starting Simple Calculator... && start index.html",
     "serve": "python -m http.server 8080 || python3 -m http.server 8080",
+    "pwa-test": "echo Testing PWA functionality... && start http://localhost:8080",
+    "mobile-guide": "start MOBILE_CONVERSION_GUIDE.md",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage --coverageReporters=text-lcov --coverageReporters=html",
