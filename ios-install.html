@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📱 iPhone Installation Guide - Calculator App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+        
+        .step {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .step-number {
+            background: #2196f3;
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .step h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .step p {
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .device-check {
+            background: #e3f2fd;
+            border: 2px solid #2196f3;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .success {
+            background: #d4edda;
+            border-color: #27ae60;
+            color: #155724;
+        }
+        
+        .warning {
+            background: #fff3cd;
+            border-color: #f39c12;
+            color: #856404;
+        }
+        
+        .error {
+            background: #f8d7da;
+            border-color: #e74c3c;
+            color: #721c24;
+        }
+        
+        .launch-btn {
+            display: block;
+            width: 100%;
+            background: #27ae60;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 20px 0;
+            text-decoration: none;
+            text-align: center;
+        }
+        
+        .launch-btn:hover {
+            background: #229954;
+        }
+        
+        .icon-preview {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .icon-preview img {
+            width: 80px;
+            height: 80px;
+            border-radius: 16px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .video-placeholder {
+            background: #f0f0f0;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            margin: 15px 0;
+            color: #666;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📱 Install Calculator as iPhone App</h1>
+        
+        <div class="icon-preview">
+            <div style="display: inline-block;">
+                <canvas id="appIcon" width="80" height="80" style="border-radius: 16px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);"></canvas>
+            </div>
+            <p style="margin-top: 10px; color: #666; font-size: 14px;">Your app icon</p>
+        </div>
+        
+        <div id="deviceStatus" class="device-check">
+            <strong>Checking device compatibility...</strong>
+        </div>
+        
+        <div class="step">
+            <div class="step-number">1</div>
+            <h3>📱 Open in Safari</h3>
+            <p>Make sure you're viewing this page in <strong>Safari browser</strong> on your iPhone or iPad. Other browsers (Chrome, Firefox, etc.) don't support PWA installation on iOS.</p>
+        </div>
+        
+        <div class="step">
+            <div class="step-number">2</div>
+            <h3>🔗 Navigate to Calculator</h3>
+            <p>Go to your calculator app URL. If you're testing locally, make sure your iPhone is on the same WiFi network as your computer.</p>
+            <a href="../index.html" class="launch-btn">🚀 Open Calculator App</a>
+        </div>
+        
+        <div class="step">
+            <div class="step-number">3</div>
+            <h3>📤 Tap Share Button</h3>
+            <p>In Safari, tap the <strong>Share button</strong> (square with arrow pointing up) in the bottom toolbar.</p>
+            <div class="video-placeholder">
+                📱 Tap the Share icon at the bottom of Safari
+            </div>
+        </div>
+        
+        <div class="step">
+            <div class="step-number">4</div>
+            <h3>🏠 Add to Home Screen</h3>
+            <p>Scroll down in the share menu and tap <strong>"Add to Home Screen"</strong>. You might need to scroll down to find this option.</p>
+            <div class="video-placeholder">
+                🏠 Look for "Add to Home Screen" option
+            </div>
+        </div>
+        
+        <div class="step">
+            <div class="step-number">5</div>
+            <h3>✏️ Customize Name (Optional)</h3>
+            <p>You can change the app name if you want, then tap <strong>"Add"</strong> in the top right corner.</p>
+        </div>
+        
+        <div class="step">
+            <div class="step-number">6</div>
+            <h3>🎉 Launch Your App!</h3>
+            <p>The Calculator app will now appear on your home screen like a native app. Tap it to launch!</p>
+        </div>
+        
+        <div class="device-check success" style="display: none;" id="successMessage">
+            <h3>✅ Perfect Setup!</h3>
+            <p>Your device supports PWA installation. Follow the steps above to install the Calculator app.</p>
+        </div>
+        
+        <div class="device-check warning" style="display: none;" id="warningMessage">
+            <h3>⚠️ Compatibility Notice</h3>
+            <p id="warningText"></p>
+        </div>
+        
+        <div class="device-check error" style="display: none;" id="errorMessage">
+            <h3>❌ Installation Not Available</h3>
+            <p id="errorText"></p>
+        </div>
+    </div>
+
+    <script>
+        // Draw app icon
+        function drawIcon() {
+            const canvas = document.getElementById('appIcon');
+            const ctx = canvas.getContext('2d');
+            const size = 80;
+
+            // Background gradient
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#667eea');
+            gradient.addColorStop(1, '#764ba2');
+            
+            // Background
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+
+            // Calculator body
+            const calcWidth = size * 0.5;
+            const calcHeight = size * 0.625;
+            const calcX = (size - calcWidth) / 2;
+            const calcY = size * 0.1875;
+            
+            ctx.fillStyle = '#2c3e50';
+            ctx.fillRect(calcX, calcY, calcWidth, calcHeight);
+
+            // Display screen
+            const screenWidth = calcWidth * 0.8;
+            const screenHeight = calcHeight * 0.2;
+            const screenX = calcX + (calcWidth - screenWidth) / 2;
+            const screenY = calcY + calcHeight * 0.1;
+            
+            ctx.fillStyle = '#1a252f';
+            ctx.fillRect(screenX, screenY, screenWidth, screenHeight);
+
+            // Display text
+            ctx.fillStyle = '#00ff41';
+            ctx.font = 'bold 6px monospace';
+            ctx.textAlign = 'right';
+            ctx.fillText('123', screenX + screenWidth - 2, screenY + screenHeight * 0.7);
+
+            // Simplified button grid
+            const buttonSize = calcWidth / 8;
+            ctx.fillStyle = '#34495e';
+            
+            // Draw some representative buttons
+            for(let i = 0; i < 6; i++) {
+                const x = calcX + (i % 3) * buttonSize * 1.5 + calcWidth * 0.1;
+                const y = screenY + screenHeight + calcHeight * 0.15 + Math.floor(i / 3) * buttonSize * 1.2;
+                ctx.fillRect(x, y, buttonSize, buttonSize * 0.8);
+            }
+        }
+
+        // Check device compatibility
+        function checkDevice() {
+            const deviceStatus = document.getElementById('deviceStatus');
+            const successMsg = document.getElementById('successMessage');
+            const warningMsg = document.getElementById('warningMessage');
+            const errorMsg = document.getElementById('errorMessage');
+            const warningText = document.getElementById('warningText');
+            const errorText = document.getElementById('errorText');
+
+            // Check if it's iOS
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            
+            // Check if it's Safari
+            const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent) && isIOS;
+            
+            // Check if already installed
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
+                               window.navigator.standalone === true;
+
+            deviceStatus.style.display = 'none';
+
+            if (isStandalone) {
+                successMsg.style.display = 'block';
+                successMsg.innerHTML = '<h3>🎉 App Already Installed!</h3><p>You\'re currently running the Calculator as a standalone app. Great job!</p>';
+            } else if (isIOS && isSafari) {
+                successMsg.style.display = 'block';
+            } else if (isIOS && !isSafari) {
+                warningMsg.style.display = 'block';
+                warningText.textContent = 'You\'re on an iOS device, but not using Safari. Please open this page in Safari to install the app. Other browsers don\'t support PWA installation on iOS.';
+            } else {
+                errorMsg.style.display = 'block';
+                if (/Android/.test(navigator.userAgent)) {
+                    errorText.textContent = 'You\'re on Android. This guide is for iPhone. On Android, you can install PWAs from Chrome browser using the "Add to Home screen" option.';
+                } else {
+                    errorText.textContent = 'This installation guide is specifically for iPhone/iPad. On desktop computers, you can bookmark this page or install it through Chrome\'s "Install app" option if available.';
+                }
+            }
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            drawIcon();
+            checkDevice();
+        });
+    </script>
+</body>
+</html>
