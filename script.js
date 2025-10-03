@@ -29,13 +29,14 @@ class TipCalculator {
         this.recommendations = {};
         this.userOverrides = {};
         this.selectedOption = null;
+        this.customRate = 5; // Default custom rate percentage
         
         // Tip rate presets
         this.tipRates = {
             excellent: { rate: 0.20, label: "💯 Excellent Service", description: "20%" },
-            good: { rate: 0.18, label: "😊 Good Service", description: "18%" },
-            standard: { rate: 0.15, label: "👌 Standard Service", description: "15%" },
-            custom: { rate: 0.18, label: "💰 Custom Rate", description: "Custom" }
+            good: { rate: 0.16, label: "😊 Good Service", description: "16%" },
+            standard: { rate: 0.125, label: "👌 Standard Service", description: "12.5%" },
+            custom: { rate: 0.05, label: "💰 Custom Rate", description: "5%" }
         };
         
         // Initialize event listeners
@@ -154,66 +155,74 @@ class TipCalculator {
     }
     
     /**
-     * Smart rounding based on bill amount
+     * Smart rounding based on total bill amount (bill + tax + tip)
+     * @param {number} totalBill - The total bill amount (bill + tax + tip)
+     * @param {number} originalTip - The calculated tip amount
      * @param {number} billAmount - The bill amount before tax
-     * @param {number} tipAmount - The calculated tip amount
-     * @returns {object} - Object containing rounded tip and rounding info
+     * @param {number} taxAmount - The tax amount
+     * @returns {object} - Object containing rounded totals and rounding info
      */
-    smartRoundTip(billAmount, tipAmount) {
-        let roundedTip;
+    smartRoundBill(totalBill, originalTip, billAmount, taxAmount) {
+        let roundedTotal;
         let roundingLevel;
         let roundingDescription;
         
-        if (billAmount < 8) {
-            // Round to nearest $0.10 (dime)
-            roundedTip = Math.round(tipAmount * 10) / 10;
-            roundingLevel = "dime";
-            roundingDescription = "Rounded to nearest 10¢ for small bills";
-        } else if (billAmount < 20) {
-            // Round to nearest $0.25 (quarter)
-            roundedTip = Math.round(tipAmount * 4) / 4;
-            roundingLevel = "quarter";
-            roundingDescription = "Rounded to nearest 25¢ for convenience";
-        } else if (billAmount < 50) {
-            // Round to nearest $0.50 (half dollar)
-            roundedTip = Math.round(tipAmount * 2) / 2;
+        if (totalBill < 10) {
+            // Round to nearest $0.50
+            roundedTotal = Math.round(totalBill * 2) / 2;
             roundingLevel = "half-dollar";
-            roundingDescription = "Rounded to nearest 50¢ for mid-size bills";
+            roundingDescription = "Total rounded to nearest 50¢ for small bills";
+        } else if (totalBill < 25) {
+            // Round to nearest $0.75 
+            // This means we round to .00, .75, 1.50, 2.25, etc.
+            roundedTotal = Math.round(totalBill / 0.75) * 0.75;
+            roundingLevel = "seventy-five";
+            roundingDescription = "Total rounded to nearest 75¢ for mid-range bills";
         } else {
-            // Round to nearest $1.00 (dollar)
-            roundedTip = Math.round(tipAmount);
+            // Round to nearest $1.00
+            roundedTotal = Math.round(totalBill);
             roundingLevel = "dollar";
-            roundingDescription = "Rounded to nearest dollar for large bills";
+            roundingDescription = "Total rounded to nearest dollar for large bills";
         }
         
+        // Calculate the adjusted tip (rounded total - bill - tax)
+        const adjustedTip = roundedTotal - billAmount - taxAmount;
+        
         return {
-            originalTip: tipAmount,
-            roundedTip: roundedTip,
+            originalTotal: totalBill,
+            roundedTotal: roundedTotal,
+            originalTip: originalTip,
+            adjustedTip: Math.max(0, adjustedTip), // Ensure tip isn't negative
             roundingLevel: roundingLevel,
             roundingDescription: roundingDescription,
-            difference: roundedTip - tipAmount
+            difference: roundedTotal - totalBill
         };
     }
     
     /**
-     * Generates tip recommendations with smart rounding
+     * Generates tip recommendations with smart total bill rounding
      */
     generateRecommendations() {
         const billAmount = parseFloat(this.billInput.value) || 0;
+        const taxAmount = parseFloat(this.taxInput.value) || 0;
         
         if (billAmount <= 0) return;
         
         // Calculate recommendations for each tip rate
         Object.keys(this.tipRates).forEach(key => {
-            const rate = this.tipRates[key].rate;
+            // Use custom rate for custom option, otherwise use preset rate
+            const rate = key === 'custom' ? (this.customRate / 100) : this.tipRates[key].rate;
             const exactTip = billAmount * rate;
-            const roundingResult = this.smartRoundTip(billAmount, exactTip);
+            const exactTotal = billAmount + taxAmount + exactTip;
+            const roundingResult = this.smartRoundBill(exactTotal, exactTip, billAmount, taxAmount);
             
             this.recommendations[key] = {
                 ...this.tipRates[key],
                 exactTip: exactTip,
-                suggestedTip: roundingResult.roundedTip,
-                userTip: this.userOverrides[key] || roundingResult.roundedTip,
+                exactTotal: exactTotal,
+                suggestedTip: roundingResult.adjustedTip,
+                suggestedTotal: roundingResult.roundedTotal,
+                userTip: this.userOverrides[key] || roundingResult.adjustedTip,
                 roundingInfo: roundingResult
             };
         });
@@ -231,7 +240,7 @@ class TipCalculator {
         
         // Show rounding explanation
         const firstRec = Object.values(this.recommendations)[0];
-        roundingInfo.textContent = firstRec.roundingInfo.roundingDescription;
+        roundingInfo.textContent = firstRec.roundingInfo.roundingDescription + " (makes payment easier)";
         
         // Clear existing options
         container.innerHTML = '';
@@ -248,14 +257,31 @@ class TipCalculator {
             optionDiv.innerHTML = `
                 <div class="tip-header">
                     <span class="tip-label">${rec.label}</span>
-                    <span class="tip-rate">${rec.description}</span>
+                    <span class="tip-rate">${key === 'custom' ? `${this.customRate}%` : rec.description}</span>
+                    ${key === 'custom' ? `
+                        <div class="custom-rate-input">
+                            <input type="number" 
+                                   id="customRateInput" 
+                                   value="${this.customRate}" 
+                                   min="0" 
+                                   max="50" 
+                                   step="0.5"
+                                   placeholder="5">
+                            <span>%</span>
+                        </div>
+                    ` : ''}
                 </div>
                 
                 <div class="tip-amounts">
                     <div class="suggested-tip">
-                        Suggested: ${this.formatCurrency(rec.suggestedTip)}
+                        Suggested tip: ${this.formatCurrency(rec.suggestedTip)}
                         ${Math.abs(rec.exactTip - rec.suggestedTip) > 0.001 ? 
-                            `<small>(rounded from ${this.formatCurrency(rec.exactTip)})</small>` : ''}
+                            `<small>(adjusted from ${this.formatCurrency(rec.exactTip)})</small>` : ''}
+                    </div>
+                    <div class="suggested-total">
+                        <strong>Total payment: ${this.formatCurrency(rec.suggestedTotal)}</strong>
+                        ${Math.abs(rec.exactTotal - rec.suggestedTotal) > 0.001 ? 
+                            `<small>(rounded from ${this.formatCurrency(rec.exactTotal)})</small>` : ''}
                     </div>
                     
                     <div class="user-tip">
@@ -305,6 +331,16 @@ class TipCalculator {
                 this.selectOption(option);
             });
         });
+        
+        // Custom rate input
+        const customRateInput = document.getElementById('customRateInput');
+        if (customRateInput) {
+            customRateInput.addEventListener('input', (e) => {
+                const newRate = parseFloat(e.target.value) || 5;
+                this.customRate = Math.max(0, Math.min(50, newRate)); // Clamp between 0-50%
+                this.onCustomRateChange();
+            });
+        }
     }
     
     /**
@@ -315,6 +351,11 @@ class TipCalculator {
     onTipOverride(option, newTipAmount) {
         this.userOverrides[option] = newTipAmount;
         this.recommendations[option].userTip = newTipAmount;
+        
+        // Recalculate user's total (no rounding applied to overrides)
+        const billAmount = parseFloat(this.billInput.value) || 0;
+        const taxAmount = parseFloat(this.taxInput.value) || 0;
+        this.recommendations[option].userTotal = billAmount + taxAmount + newTipAmount;
         
         // Update override indicator
         const optionDiv = document.querySelector(`[data-option="${option}"]`);
@@ -329,8 +370,29 @@ class TipCalculator {
             indicator.remove();
         }
         
+        // Update the total display in the option
+        const totalDisplay = optionDiv.querySelector('.user-total');
+        if (totalDisplay) {
+            totalDisplay.textContent = `Total: ${this.formatCurrency(this.recommendations[option].userTotal)}`;
+        }
+        
         // Update payment breakdown if this option is selected
         if (this.selectedOption === option) {
+            this.updatePaymentBreakdown();
+        }
+    }
+
+    /**
+     * Handles custom tip rate changes
+     */
+    onCustomRateChange() {
+        // Recalculate recommendations with new custom rate
+        this.generateRecommendations();
+        this.displayRecommendations();
+        this.attachRecommendationListeners();
+        
+        // Update payment breakdown if custom is selected
+        if (this.selectedOption === 'custom') {
             this.updatePaymentBreakdown();
         }
     }
