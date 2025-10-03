@@ -1,15 +1,15 @@
 {
-  "name": "Simple Calculator",
-  "short_name": "Calculator",
-  "description": "A simple calculator with basic arithmetic operations - optimized for mobile devices",
+  "name": "Tip Calculator - Smart Rounding & Bill Splitting",
+  "short_name": "Tip Calculator",
+  "description": "Professional tip calculator with smart rounding, bill splitting, and payment breakdown - optimized for mobile devices",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#2c3e50",
-  "theme_color": "#2196F3",
+  "theme_color": "#2ecc71",
   "orientation": "portrait",
   "scope": "./",
   "lang": "en",
-  "categories": ["productivity", "utilities"],
+  "categories": ["productivity", "utilities", "finance", "lifestyle"],
   "screenshots": [
     {
       "src": "icons/screenshot-mobile.png",

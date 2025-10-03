@@ -1,7 +1,7 @@
-// Enhanced Service Worker for PWA functionality with iOS optimization
-const CACHE_NAME = 'calculator-v2';
-const STATIC_CACHE = 'static-v2';
-const DYNAMIC_CACHE = 'dynamic-v2';
+// Enhanced Service Worker for Tip Calculator PWA with iOS optimization
+const CACHE_NAME = 'tip-calculator-v1';
+const STATIC_CACHE = 'tip-static-v1';
+const DYNAMIC_CACHE = 'tip-dynamic-v1';
 
 // Resources to cache immediately
 const STATIC_ASSETS = [
