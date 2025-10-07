@@ -1,82 +1,153 @@
-# Simple Calculator Application
+# Tip Calculator Application
 
-A web-based calculator with basic arithmetic operations (addition and subtraction) built with HTML, CSS, and JavaScript.
+A smart web-based tip calculator with intelligent rounding, bill splitting, and mobile optimization built with HTML, CSS, and JavaScript.
 
 ## Features
 
-- **Display**: Shows up to 8 digits for positive numbers or "-" and 7 digits for negative numbers
-- **Error Handling**: Displays "OVERFLOW" or "ERROR" when appropriate
-- **Buttons**: 
-  - Digits 0-9
-  - Operators: + and -
-  - Calculate button
-  - Reset button
+- **Smart Tip Calculation**: Automatically recommends optimal tip amounts with intelligent rounding
+- **Bill Splitting**: Divide bills evenly among multiple guests with detailed per-person breakdown
+- **Multiple Service Levels**: 
+  - 💯 Excellent Service (20%)
+  - 😊 Good Service (16%)
+  - 👌 Standard Service (12.5%)
+  - 💰 Custom Rate (user-defined)
+- **Tax Integration**: Calculate tips on pre-tax or total amounts
+- **Real-time Updates**: Live calculations as you type
+- **Mobile Optimized**: PWA-enabled for smartphone installation
+- **User Override**: Modify recommended amounts with custom values
 
 ## Usage
 
 ### Running the Application
 1. Make sure you have XAMPP running
 2. Open your browser and navigate to: `localhost/CSD228%20Fall%202025/Unit%201D/index.html`
+3. **Mobile Installation**: Use "Add to Home Screen" in your mobile browser for app-like experience
 
-### Calculator Operations
+### Tip Calculator Operations
 
-#### Entering Numbers
-- Click digit buttons (0-9) to enter numbers
-- First digit click sets the current value
-- Subsequent clicks multiply current value by 10 and add the new digit
-- Example: Clicking 3, then 6 results in display showing 36
+#### Step 1: Enter Bill Information
+- **💵 Bill Amount**: Enter the pre-tax bill amount
+- **📊 Tax Amount**: Enter the tax amount (optional)
+- **🧾 Total Bill**: Automatically calculated (bill + tax)
 
-#### Using Operators
-- Click + or - after entering a number
-- The operator button will be highlighted
-- Must be followed by entering a number or clicking Reset
+#### Step 2: Select Party Size
+- **👥 Number of Guests**: Choose 1-6 guests or select "6+" for custom amount
+- For parties larger than 6, enter exact number in custom field
+- Calculations automatically adjust for group size
 
-#### Calculating Results
-- Click "Calculate" to perform the operation on the previous and current numbers
-- Result becomes the new current value and is displayed
+#### Step 3: Get Recommendations
+- Click "🎯 Show Recommended Tips" to see smart suggestions
+- Algorithm analyzes bill amount and suggests optimal rounding
+- Choose from preset service levels or use custom rate
 
-#### Resetting
-- Click "Reset" to clear all values and return display to 0
-- Can be used at any time to start over
+#### Step 4: Review Breakdown
+- **Per Person Amount**: See individual payment amount
+- **Total with Tip**: View final amount including tip
+- **Tip Percentage**: Confirm effective tip rate
+- **Override Options**: Modify any recommended amount
 
-### Keyboard Support
-- **Number keys (0-9)**: Enter digits
-- **+ key**: Addition operator
-- **- key**: Subtraction operator
-- **Enter or = key**: Calculate
-- **Escape or Backspace**: Reset
+### Smart Rounding Algorithm
+The tip calculator uses intelligent rounding to suggest convenient payment amounts:
+- **Small Bills ($10-30)**: Rounds to nearest $0.50 or whole dollar
+- **Medium Bills ($30-100)**: Optimizes for easy mental math
+- **Large Bills ($100+)**: Focuses on standard tip percentages
+- **Group Splitting**: Ensures even per-person amounts
 
-### Error Handling
-- **OVERFLOW**: Displayed when numbers exceed the display range
-- **ERROR**: Displayed when calculation errors occur
-- Calculator automatically resets after displaying error messages
+### Mobile Features
+- **Progressive Web App (PWA)**: Install as native app
+- **Offline Capable**: Works without internet connection
+- **Touch Optimized**: Large buttons and intuitive gestures
+- **Responsive Design**: Adapts to all screen sizes
+
+### Service Level Guidelines
+- **💯 Excellent (20%)**: Outstanding service, special occasions
+- **😊 Good (16%)**: Above average service, friendly staff
+- **👌 Standard (12.5%)**: Acceptable service, nothing special
+- **💰 Custom**: Set your own rate (5-30% range)
 
 ## File Structure
 ```
 Unit 1D/
-├── index.html      # Main HTML structure
-├── styles.css      # Styling and layout
-├── script.js       # Calculator logic and functionality
-└── README.md       # This documentation
+├── index.html           # Main HTML structure with PWA support
+├── styles.css           # Mobile-optimized styling and animations
+├── script.js            # TipCalculator class and smart algorithms
+├── manifest.json        # PWA configuration
+├── sw.js               # Service worker for offline functionality
+├── icons/              # App icons for mobile installation
+├── tests/              # Comprehensive test suite
+└── README.md           # This documentation
 ```
 
 ## Technical Details
 
-### Display Limits
-- Positive numbers: Maximum 8 digits
-- Negative numbers: Maximum 7 digits (plus minus sign)
-- Overflow protection prevents display corruption
+### Smart Algorithm Features
+- **Bill Analysis**: Automatically detects bill patterns for optimal rounding
+- **Group Mathematics**: Ensures even splits with minimal remainder amounts
+- **Rate Validation**: Prevents unrealistic tip percentages (5-30% range)
+- **Currency Precision**: Handles decimal calculations with proper rounding
 
 ### CSS Features
-- Responsive design that works on different screen sizes
-- Modern gradient background
-- Button hover and press animations
-- Color-coded buttons (numbers, operators, functions)
-- Digital-style display with monospace font
+- **Mobile-First Design**: Optimized for touch interfaces and small screens
+- **PWA Styling**: Native app-like appearance when installed
+- **Animated Interactions**: Smooth transitions and hover effects
+- **Accessibility**: High contrast ratios and readable fonts
+- **Responsive Layout**: Adapts from mobile to desktop seamlessly
 
 ### JavaScript Features
-- Object-oriented design using ES6 classes
-- Comprehensive error handling
-- Keyboard event support
-- Visual feedback for operator selection
-- Overflow detection and prevention
+- **TipCalculator Class**: Modern ES6+ object-oriented architecture
+- **Real-time Calculations**: Live updates as user types
+- **Smart Algorithms**: Intelligent rounding and optimization logic
+- **State Management**: Maintains user preferences and overrides
+- **Event-Driven**: Responsive to user interactions and input changes
+- **PWA Integration**: Service worker and offline capabilities
+
+### Browser Compatibility
+- **Modern Browsers**: Chrome, Firefox, Safari, Edge (latest versions)
+- **Mobile Browsers**: iOS Safari, Chrome Mobile, Samsung Internet
+- **PWA Support**: Installable on iOS 11.3+, Android Chrome 70+
+- **Offline Mode**: Full functionality without internet connection
+
+## Example Usage Scenarios
+
+### Scenario 1: Dinner for Two
+1. Enter bill amount: $45.80
+2. Enter tax: $3.66
+3. Select 2 guests
+4. Review recommendations (15-20% tips)
+5. Each person pays: $24.73-$26.23
+
+### Scenario 2: Group Celebration
+1. Enter bill: $180.50
+2. Enter tax: $14.44
+3. Select "6+" guests, enter 8
+4. Choose service level (excellent/good/standard)
+5. Split evenly: $24.37-$29.24 per person
+
+### Scenario 3: Quick Coffee
+1. Enter bill: $8.45
+2. No tax
+3. 1 guest
+4. Smart rounding suggests: $9.00 or $10.00
+
+## Installation as Mobile App
+
+### iOS (iPhone/iPad)
+1. Open in Safari browser
+2. Tap Share button (□↗)
+3. Scroll and tap "Add to Home Screen"
+4. Confirm installation
+5. Launch from home screen like any app
+
+### Android
+1. Open in Chrome browser
+2. Tap menu (⋮) → "Install app" 
+3. Or look for "Add to Home Screen" banner
+4. Confirm installation
+5. Find in app drawer or home screen
+
+---
+
+**Project**: CSD228 Fall 2025 - Unit 1D  
+**Author**: Tip Calculator Development Team  
+**Version**: 2.0 - Smart Tip Calculator with PWA Support  
+**Last Updated**: October 7, 2025
