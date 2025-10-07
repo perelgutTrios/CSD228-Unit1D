@@ -10,6 +10,12 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     
+    # Grant GITHUB_TOKEN the permissions required for deployment
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
