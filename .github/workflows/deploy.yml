@@ -45,7 +45,8 @@ jobs:
         publish_branch: gh-pages
         user_name: 'github-actions[bot]'
         user_email: 'github-actions[bot]@users.noreply.github.com'
-        commit_message: 'Deploy tip calculator PWA'
+        commit_message: 'Deploy tip calculator PWA from TipCalc branch'
+        force_orphan: true
     
     - name: PWA Lighthouse Audit
       uses: treosh/lighthouse-ci-action@v9
