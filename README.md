@@ -16,12 +16,24 @@ A smart web-based tip calculator with intelligent rounding, bill splitting, and 
 - **Mobile Optimized**: PWA-enabled for smartphone installation
 - **User Override**: Modify recommended amounts with custom values
 
+## 🚀 Live Mobile App
+
+### **📱 Install on Your Phone**
+**Live URL**: https://perelgutTrios.github.io/CSD228-Unit1D/
+
+**iPhone/iPad**: Safari → Share → "Add to Home Screen"  
+**Android**: Chrome → Menu → "Install app"  
+**Desktop**: Chrome → Install icon in address bar
+
+### **🌐 Web Access**
+Visit https://perelgutTrios.github.io/CSD228-Unit1D/ in any browser
+
 ## Usage
 
-### Running the Application
+### Local Development
 1. Make sure you have XAMPP running
 2. Open your browser and navigate to: `localhost/CSD228%20Fall%202025/Unit%201D/index.html`
-3. **Mobile Installation**: Use "Add to Home Screen" in your mobile browser for app-like experience
+3. **Mobile Testing**: Access via mobile browser for PWA features
 
 ### Tip Calculator Operations
 
@@ -145,9 +157,34 @@ Unit 1D/
 4. Confirm installation
 5. Find in app drawer or home screen
 
+## 🚀 Deployment & Access
+
+### **📱 Live Mobile App**
+- **URL**: https://perelgutTrios.github.io/CSD228-Unit1D/
+- **QR Code**: Open `qr-code.html` for easy mobile access
+- **GitHub Pages**: Automatically deployed from TipCalc branch
+
+### **📋 Deployment Guides**
+- **Mobile Deployment**: See `GITHUB_DEPLOYMENT.md`
+- **iPhone Installation**: See `DEPLOYMENT_STEPS.md` 
+- **PWA Configuration**: Manifest.json and service worker included
+
+### **🔄 Automatic Updates**
+- Commits to TipCalc branch trigger auto-deployment
+- GitHub Actions handles testing and deployment
+- Lighthouse audits ensure PWA compliance
+
+### **📊 Technical Stack**
+- **Frontend**: HTML5, CSS3, JavaScript ES6+
+- **PWA**: Manifest, Service Worker, Offline Support
+- **Deployment**: GitHub Pages, GitHub Actions
+- **Testing**: Jest test suite (57 tests)
+- **Mobile**: iOS/Android installation support
+
 ---
 
-**Project**: CSD228 Fall 2025 - Unit 1D  
-**Author**: Tip Calculator Development Team  
-**Version**: 2.0 - Smart Tip Calculator with PWA Support  
-**Last Updated**: October 7, 2025
+**🎯 Project**: CSD228 Fall 2025 - Unit 1D Tip Calculator  
+**👨‍💻 Author**: Mobile App Development Team  
+**📱 Version**: 2.0 - PWA Smart Tip Calculator  
+**🌐 Live Demo**: https://perelgutTrios.github.io/CSD228-Unit1D/  
+**📅 Last Updated**: October 7, 2025

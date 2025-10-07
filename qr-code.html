@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code - Tip Calculator Mobile App</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 500px;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+        
+        #qrcode {
+            margin: 30px 0;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .url {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: monospace;
+            margin: 20px 0;
+            word-break: break-all;
+            font-size: 0.9rem;
+            color: #2c3e50;
+        }
+        
+        .instructions {
+            background: #e8f4fd;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        
+        .instructions h3 {
+            color: #2980b9;
+            margin-top: 0;
+        }
+        
+        .step {
+            margin: 10px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .step::before {
+            content: "📱";
+            position: absolute;
+            left: 0;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+        
+        .feature {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #2ecc71;
+        }
+        
+        .feature h4 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+        }
+        
+        .feature p {
+            margin: 0;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💰 Tip Calculator</h1>
+        <p class="subtitle">Smart Rounding & Bill Splitting Mobile App</p>
+        
+        <div id="qrcode"></div>
+        
+        <div class="url">
+            https://perelgutTrios.github.io/CSD228-Unit1D/
+        </div>
+        
+        <div class="instructions">
+            <h3>📱 Install on Your Phone</h3>
+            <div class="step">Scan QR code with your phone camera</div>
+            <div class="step">Open the link in your browser</div>
+            <div class="step">Look for "Add to Home Screen" option</div>
+            <div class="step">Install as a native mobile app!</div>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <h4>🧮 Smart Tips</h4>
+                <p>Intelligent rounding for convenient amounts</p>
+            </div>
+            <div class="feature">
+                <h4>👥 Bill Splitting</h4>
+                <p>Easy division among multiple guests</p>
+            </div>
+            <div class="feature">
+                <h4>📱 PWA Ready</h4>
+                <p>Works offline like a native app</p>
+            </div>
+            <div class="feature">
+                <h4>⚡ Real-time</h4>
+                <p>Live calculations as you type</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- QR Code Generation -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script>
+        const appUrl = 'https://perelgutTrios.github.io/CSD228-Unit1D/';
+        
+        // Generate QR Code
+        QRCode.toCanvas(document.createElement('canvas'), appUrl, {
+            width: 200,
+            height: 200,
+            color: {
+                dark: '#2c3e50',
+                light: '#ffffff'
+            }
+        }, function (error, canvas) {
+            if (error) {
+                console.error(error);
+                document.getElementById('qrcode').innerHTML = '<p>Error generating QR code</p>';
+            } else {
+                document.getElementById('qrcode').appendChild(canvas);
+            }
+        });
+        
+        // Analytics (if needed)
+        console.log('QR Code generated for:', appUrl);
+    </script>
+</body>
+</html>
