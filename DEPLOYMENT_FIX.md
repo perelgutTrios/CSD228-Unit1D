@@ -22,6 +22,19 @@ git log --oneline -5
 ```
 
 ### Option 3: Create gh-pages branch from TipCalc
+#### Windows PowerShell:
+```powershell
+# Create gh-pages branch from current TipCalc content
+git checkout TipCalc
+git branch -D gh-pages 2>$null; if ($?) { Write-Host "Deleted existing gh-pages branch" }
+git checkout -b gh-pages
+git push -f origin gh-pages
+
+# Switch back to TipCalc for development
+git checkout TipCalc
+```
+
+#### Linux/Mac/Git Bash:
 ```bash
 # Create gh-pages branch from current TipCalc content
 git checkout TipCalc
