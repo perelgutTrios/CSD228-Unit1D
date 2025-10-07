@@ -1,23 +1,43 @@
 /**
- * Unit Tests for Calculator Class
+ * Unit Tests for TipCalculator Class
  * Tests individual methods and functionality in isolation
  */
 
-// Import the Calculator class
-const Calculator = require('../script.js');
+// Import the TipCalculator class
+const TipCalculator = require('../script.js');
 
-describe('Calculator Unit Tests', () => {
-  let calculator;
+describe('TipCalculator Unit Tests', () => {
+  let tipCalculator;
 
   beforeEach(() => {
-    calculator = new Calculator();
+    // Mock DOM elements that TipCalculator expects
+    global.document = {
+      getElementById: jest.fn((id) => {
+        const mockElement = {
+          addEventListener: jest.fn(),
+          value: '',
+          textContent: '0',
+          classList: {
+            add: jest.fn(),
+            remove: jest.fn(),
+            contains: jest.fn(() => false)
+          },
+          style: {}
+        };
+        return mockElement;
+      }),
+      querySelectorAll: jest.fn(() => [])
+    };
+    
+    tipCalculator = new TipCalculator();
   });
 
-  describe('TC1: Number Entry Tests', () => {
-    test('TC1.1: Single digit entry sets current value', () => {
-      calculator.inputNumber(5);
-      expect(calculator.currentValue).toBe(5);
-      expect(document.getElementById('screen').textContent).toBe('5');
+  describe('TC1: TipCalculator Initialization Tests', () => {
+    test('TC1.1: TipCalculator initializes with default values', () => {
+      expect(tipCalculator.currentGuests).toBe(1);
+      expect(tipCalculator.customRate).toBe(5);
+      expect(tipCalculator.recommendations).toEqual({});
+      expect(tipCalculator.userOverrides).toEqual({});
     });
 
     test('TC1.2: Multiple digit entry builds number correctly', () => {

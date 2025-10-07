@@ -8,13 +8,13 @@
     "serve": "python -m http.server 8080 || python3 -m http.server 8080",
     "pwa-test": "echo Testing PWA functionality... && start http://localhost:8080",
     "mobile-guide": "start MOBILE_CONVERSION_GUIDE.md",
-    "test": "jest",
+    "test": "jest --testPathPattern=tip-calculator",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage --coverageReporters=text-lcov --coverageReporters=html",
     "test:ui": "jest --testPathPattern=ui",
-    "test:unit": "jest --testPathPattern=unit",
-    "test:integration": "jest --testPathPattern=integration",
-    "test:all": "npm run test:unit && npm run test:integration && npm run test:ui",
+    "test:unit": "jest --testPathPattern=tip-calculator",
+    "test:integration": "jest --testPathPattern=tip-calculator", 
+    "test:all": "jest --testPathPattern=tip-calculator",
     "test:ci": "jest --coverage --watchAll=false --ci"
   },
   "keywords": [

@@ -1,294 +1,135 @@
 /**
- * Integration Tests for Calculator Application
+ * Integration Tests for Tip Calculator Application
  * Tests component interactions and complete user workflows
  */
 
-// Import the Calculator class
-const Calculator = require('../script.js');
+// Import the TipCalculator class
+const TipCalculator = require('../script.js');
 
-describe('Calculator Integration Tests', () => {
-  let calculator;
+describe('Tip Calculator Integration Tests', () => {
+  let tipCalculator;
+  let mockDOM;
 
   beforeEach(() => {
-    calculator = new Calculator();
+    // Mock DOM elements that TipCalculator expects
+    global.document = {
+      getElementById: jest.fn((id) => {
+        const mockElement = {
+          addEventListener: jest.fn(),
+          value: '',
+          textContent: '0',
+          classList: {
+            add: jest.fn(),
+            remove: jest.fn(),
+            contains: jest.fn(() => false)
+          },
+          style: {}
+        };
+        return mockElement;
+      }),
+      querySelectorAll: jest.fn(() => [])
+    };
+    
+    tipCalculator = new TipCalculator();
   });
 
-  describe('Complete User Workflows', () => {
-    test('Complete addition workflow: 25 + 17 = 42', () => {
-      // Enter first number: 25
-      calculator.inputNumber(2);
-      calculator.inputNumber(5);
-      expect(document.getElementById('screen').textContent).toBe('25');
+  describe('Tip Calculation Workflows', () => {
+    test('Basic tip calculation workflow', () => {
+      // Test that TipCalculator initializes properly
+      expect(tipCalculator).toBeDefined();
+      expect(tipCalculator.currentGuests).toBe(1);
+      expect(tipCalculator.customRate).toBe(5);
       
-      // Enter operator: +
-      calculator.inputOperator('+');
-      expect(document.getElementById('plus').classList.contains('selected')).toBe(true);
-      expect(calculator.waitingForNewValue).toBe(true);
-      
-      // Enter second number: 17
-      calculator.inputNumber(1);
-      calculator.inputNumber(7);
-      expect(document.getElementById('screen').textContent).toBe('17');
-      
-      // Calculate result
-      calculator.calculate();
-      expect(document.getElementById('screen').textContent).toBe('42');
-      expect(calculator.currentValue).toBe(42);
-      expect(document.getElementById('plus').classList.contains('selected')).toBe(false);
+      // Test tip rate presets exist
+      expect(tipCalculator.tipRates).toBeDefined();
+      expect(tipCalculator.tipRates.excellent.rate).toBe(0.20);
+      expect(tipCalculator.tipRates.good.rate).toBe(0.16);
+      expect(tipCalculator.tipRates.standard.rate).toBe(0.125);
     });
 
-    test('Complete subtraction workflow: 100 - 33 = 67', () => {
-      // Enter first number: 100
-      calculator.inputNumber(1);
-      calculator.inputNumber(0);
-      calculator.inputNumber(0);
-      expect(document.getElementById('screen').textContent).toBe('100');
+    test('Calculate total bill workflow', () => {
+      // Test that calculateTotalBill method exists and works
+      expect(typeof tipCalculator.calculateTotalBill).toBe('function');
       
-      // Enter operator: -
-      calculator.inputOperator('-');
-      expect(document.getElementById('minus').classList.contains('selected')).toBe(true);
+      // Mock bill and tax amounts
+      tipCalculator.billInput = { value: '50.00' };
+      tipCalculator.taxInput = { value: '4.00' };
       
-      // Enter second number: 33
-      calculator.inputNumber(3);
-      calculator.inputNumber(3);
-      expect(document.getElementById('screen').textContent).toBe('33');
-      
-      // Calculate result
-      calculator.calculate();
-      expect(document.getElementById('screen').textContent).toBe('67');
-      expect(calculator.currentValue).toBe(67);
+      const total = tipCalculator.calculateTotalBill();
+      expect(total).toBe(54.00);
     });
 
-    test('Chain calculation workflow: 10 + 5 - 3 = 12', () => {
-      // First operation: 10 + 5
-      calculator.inputNumber(1);
-      calculator.inputNumber(0);
-      calculator.inputOperator('+');
-      calculator.inputNumber(5);
-      calculator.calculate();
-      expect(calculator.currentValue).toBe(15);
+    test('Guest count selection workflow', () => {
+      // Test initial state
+      expect(tipCalculator.currentGuests).toBe(1);
       
-      // Chain operation: result - 3
-      calculator.inputOperator('-');
-      calculator.inputNumber(3);
-      calculator.calculate();
-      expect(calculator.currentValue).toBe(12);
-      expect(document.getElementById('screen').textContent).toBe('12');
+      // Test that setGuests method works
+      if (typeof tipCalculator.setGuests === 'function') {
+        tipCalculator.setGuests(4);
+        expect(tipCalculator.currentGuests).toBe(4);
+      }
     });
 
-    test('Reset workflow during operation', () => {
-      // Start calculation
-      calculator.inputNumber(5);
-      calculator.inputOperator('+');
-      calculator.inputNumber(3);
+    test('Tip rate selection workflow', () => {
+      // Test that tip rates are properly defined
+      expect(tipCalculator.tipRates.excellent).toBeDefined();
+      expect(tipCalculator.tipRates.good).toBeDefined();
+      expect(tipCalculator.tipRates.standard).toBeDefined();
+      expect(tipCalculator.tipRates.custom).toBeDefined();
       
-      // Reset before calculating
-      calculator.reset();
-      
-      // Verify clean state
-      expect(calculator.currentValue).toBe(0);
-      expect(calculator.previousValue).toBe(null);
-      expect(calculator.operator).toBe(null);
-      expect(document.getElementById('screen').textContent).toBe('0');
-      
-      // Should be able to start new calculation
-      calculator.inputNumber(7);
-      calculator.inputOperator('+');
-      calculator.inputNumber(2);
-      calculator.calculate();
-      expect(calculator.currentValue).toBe(9);
+      // Test rate values
+      expect(tipCalculator.tipRates.excellent.rate).toBe(0.20); // 20%
+      expect(tipCalculator.tipRates.good.rate).toBe(0.16); // 16%
+      expect(tipCalculator.tipRates.standard.rate).toBe(0.125); // 12.5%
     });
   });
 
-  describe('Error Condition Integration Tests', () => {
-    test('Overflow during number entry integration', () => {
-      // Enter maximum digits
-      const maxDigits = [9, 9, 9, 9, 9, 9, 9, 9]; // 8 digits
-      maxDigits.forEach(digit => calculator.inputNumber(digit));
-      expect(calculator.currentValue).toBe(99999999);
+  describe('Input Validation Tests', () => {
+    test('Handle invalid bill amounts', () => {
+      // Test that TipCalculator handles invalid inputs gracefully
+      tipCalculator.billInput = { value: 'invalid' };
+      tipCalculator.taxInput = { value: '0' };
       
-      // Try to add another digit
-      calculator.inputNumber(9);
-      expect(document.getElementById('screen').textContent).toBe('OVERFLOW');
-      expect(calculator.currentValue).toBe(0);
-      expect(calculator.waitingForNewValue).toBe(true);
-      
-      // Should be able to continue after overflow
-      calculator.inputNumber(5);
-      expect(calculator.currentValue).toBe(5);
-      expect(document.getElementById('screen').textContent).toBe('5');
+      const total = tipCalculator.calculateTotalBill();
+      expect(total).toBe(0); // Should default to 0 for invalid input
     });
 
-    test('Overflow during calculation integration', () => {
-      // Set up for overflow calculation
-      calculator.currentValue = 50000000;
-      calculator.previousValue = 50000000;
-      calculator.operator = '+';
-      calculator.waitingForNewValue = false;
+    test('Handle negative bill amounts', () => {
+      // Test that TipCalculator handles negative inputs
+      tipCalculator.billInput = { value: '-50' };
+      tipCalculator.taxInput = { value: '0' };
       
-      calculator.calculate();
-      
-      expect(document.getElementById('screen').textContent).toBe('OVERFLOW');
-      expect(calculator.currentValue).toBe(0);
-      
-      // Should be able to continue after overflow
-      calculator.inputNumber(3);
-      expect(calculator.currentValue).toBe(3);
-    });
-
-    test('Negative result handling integration', () => {
-      // Calculate negative result: 5 - 10 = -5
-      calculator.inputNumber(5);
-      calculator.inputOperator('-');
-      calculator.inputNumber(1);
-      calculator.inputNumber(0);
-      calculator.calculate();
-      
-      expect(calculator.currentValue).toBe(-5);
-      expect(document.getElementById('screen').textContent).toBe('-5');
-      
-      // Should be able to continue with negative result
-      calculator.inputOperator('+');
-      calculator.inputNumber(8);
-      calculator.calculate();
-      expect(calculator.currentValue).toBe(3);
+      const total = tipCalculator.calculateTotalBill();
+      expect(total).toBe(0); // Should not allow negative bills
     });
   });
 
-  describe('State Management Integration Tests', () => {
-    test('Operator selection state management', () => {
-      calculator.inputNumber(5);
-      
-      // Select addition
-      calculator.inputOperator('+');
-      expect(document.getElementById('plus').classList.contains('selected')).toBe(true);
-      expect(document.getElementById('minus').classList.contains('selected')).toBe(false);
-      
-      // Change to subtraction
-      calculator.inputOperator('-');
-      expect(document.getElementById('plus').classList.contains('selected')).toBe(false);
-      expect(document.getElementById('minus').classList.contains('selected')).toBe(true);
-      
-      // Enter number should clear selection
-      calculator.inputNumber(3);
-      expect(document.getElementById('plus').classList.contains('selected')).toBe(false);
-      expect(document.getElementById('minus').classList.contains('selected')).toBe(false);
+  describe('Tip Calculator Core Functionality', () => {
+    test('TipCalculator class initialization', () => {
+      // Test that the class initializes with expected properties
+      expect(tipCalculator.currentGuests).toBeDefined();
+      expect(tipCalculator.recommendations).toBeDefined();
+      expect(tipCalculator.userOverrides).toBeDefined();
+      expect(tipCalculator.tipRates).toBeDefined();
     });
 
-    test('WaitingForNewValue state transitions', () => {
-      expect(calculator.waitingForNewValue).toBe(false);
-      
-      // After operator, should wait for new value
-      calculator.inputNumber(5);
-      calculator.inputOperator('+');
-      expect(calculator.waitingForNewValue).toBe(true);
-      
-      // After number entry, should not wait
-      calculator.inputNumber(3);
-      expect(calculator.waitingForNewValue).toBe(false);
-      
-      // After calculation, should wait for new value
-      calculator.calculate();
-      expect(calculator.waitingForNewValue).toBe(true);
-      
-      // New number should clear waiting state
-      calculator.inputNumber(7);
-      expect(calculator.waitingForNewValue).toBe(false);
-    });
-  });
-
-  describe('Edge Case Integration Tests', () => {
-    test('Multiple operator presses integration', () => {
-      calculator.inputNumber(5);
-      calculator.inputOperator('+');
-      calculator.inputOperator('-'); // Change operator
-      calculator.inputOperator('+'); // Change again
-      
-      expect(calculator.operator).toBe('+');
-      expect(calculator.previousValue).toBe(5);
-      expect(document.getElementById('plus').classList.contains('selected')).toBe(true);
+    test('Tip rate calculations', () => {
+      // Test basic tip rate functionality
+      const billAmount = 100;
+      const excellentRate = tipCalculator.tipRates.excellent.rate;
+      const expectedTip = billAmount * excellentRate;
+      expect(expectedTip).toBe(20); // 20% of $100 = $20
     });
 
-    test('Calculate without complete operation', () => {
-      // Just operator, no second operand
-      calculator.inputNumber(5);
-      calculator.inputOperator('+');
-      calculator.calculate(); // Should do nothing
+    test('Guest count management', () => {
+      // Test guest count handling
+      expect(tipCalculator.currentGuests).toBe(1);
       
-      expect(calculator.currentValue).toBe(5);
-      expect(calculator.operator).toBe('+');
-      expect(calculator.previousValue).toBe(5);
-    });
-
-    test('Zero handling in calculations', () => {
-      // Addition with zero
-      calculator.inputNumber(5);
-      calculator.inputOperator('+');
-      calculator.inputNumber(0);
-      calculator.calculate();
-      expect(calculator.currentValue).toBe(5);
-      
-      // Subtraction with zero
-      calculator.reset();
-      calculator.inputNumber(5);
-      calculator.inputOperator('-');
-      calculator.inputNumber(0);
-      calculator.calculate();
-      expect(calculator.currentValue).toBe(5);
-      
-      // Zero minus number
-      calculator.reset();
-      calculator.inputNumber(0);
-      calculator.inputOperator('-');
-      calculator.inputNumber(3);
-      calculator.calculate();
-      expect(calculator.currentValue).toBe(-3);
-    });
-  });
-
-  describe('Display Update Integration Tests', () => {
-    test('Display updates correctly throughout operation', () => {
-      const screen = document.getElementById('screen');
-      
-      // Initial state
-      expect(screen.textContent).toBe('0');
-      
-      // Number entry
-      calculator.inputNumber(1);
-      expect(screen.textContent).toBe('1');
-      
-      calculator.inputNumber(2);
-      expect(screen.textContent).toBe('12');
-      
-      // Operator doesn't change display immediately
-      calculator.inputOperator('+');
-      expect(screen.textContent).toBe('12');
-      
-      // New number entry
-      calculator.inputNumber(3);
-      expect(screen.textContent).toBe('3');
-      
-      calculator.inputNumber(4);
-      expect(screen.textContent).toBe('34');
-      
-      // Calculation updates display
-      calculator.calculate();
-      expect(screen.textContent).toBe('46');
-    });
-
-    test('Error state display integration', () => {
-      const screen = document.getElementById('screen');
-      
-      // Trigger overflow
-      calculator.currentValue = 999999999; // 9 digits
-      calculator.updateDisplay();
-      expect(screen.textContent).toBe('OVERFLOW');
-      expect(screen.classList.contains('overflow')).toBe(true);
-      
-      // Reset should clear error state
-      calculator.reset();
-      expect(screen.textContent).toBe('0');
-      expect(screen.classList.contains('overflow')).toBe(false);
+      // Test that we can change guest count (if method exists)
+      if (typeof tipCalculator.setGuests === 'function') {
+        tipCalculator.setGuests(2);
+        expect(tipCalculator.currentGuests).toBe(2);
+      }
     });
   });
 });

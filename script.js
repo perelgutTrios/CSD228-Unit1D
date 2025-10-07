@@ -18,11 +18,11 @@ class TipCalculator {
      * Constructor - initializes tip calculator state and sets up event listeners
      */
     constructor() {
-        // Get references to input elements
-        this.billInput = document.getElementById('billAmount');
-        this.taxInput = document.getElementById('taxAmount');
-        this.totalDisplay = document.getElementById('totalBill');
-        this.showTipsBtn = document.getElementById('showTips');
+        // Get references to input elements (with null checks for testing)
+        this.billInput = document?.getElementById ? document.getElementById('billAmount') : null;
+        this.taxInput = document?.getElementById ? document.getElementById('taxAmount') : null;
+        this.totalDisplay = document?.getElementById ? document.getElementById('totalBill') : null;
+        this.showTipsBtn = document?.getElementById ? document.getElementById('showTips') : null;
         
         // State variables
         this.currentGuests = 1;
@@ -39,12 +39,14 @@ class TipCalculator {
             custom: { rate: 0.05, label: "💰 Custom Rate", description: "5%" }
         };
         
-        // Initialize event listeners
-        this.initializeEventListeners();
-        
-        // Initial state
-        this.updateTotalBill();
-        this.updateShowTipsButton();
+        // Initialize event listeners (only if DOM is available)
+        if (typeof document !== 'undefined' && document.getElementById) {
+            this.initializeEventListeners();
+            
+            // Initial state
+            this.updateTotalBill();
+            this.updateShowTipsButton();
+        }
     }
     
     /**
@@ -52,60 +54,75 @@ class TipCalculator {
      */
     initializeEventListeners() {
         // Input field listeners for real-time updates
-        this.billInput.addEventListener('input', () => {
-            this.updateTotalBill();
-            this.updateShowTipsButton();
-            this.hideRecommendations();
-        });
+        if (this.billInput) {
+            this.billInput.addEventListener('input', () => {
+                this.updateTotalBill();
+                this.updateShowTipsButton();
+                this.hideRecommendations();
+            });
+        }
         
-        this.taxInput.addEventListener('input', () => {
-            this.updateTotalBill();
-            this.updateShowTipsButton();
-            this.hideRecommendations();
-        });
+        if (this.taxInput) {
+            this.taxInput.addEventListener('input', () => {
+                this.updateTotalBill();
+                this.updateShowTipsButton();
+                this.hideRecommendations();
+            });
+        }
         
         // Guest selector buttons
-        document.querySelectorAll('.guest-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                this.selectGuests(e.target.dataset.guests);
+        if (document.querySelectorAll) {
+            document.querySelectorAll('.guest-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    this.selectGuests(e.target.dataset.guests);
+                });
             });
-        });
+        }
         
         // Custom guest input
-        document.getElementById('customGuests').addEventListener('input', (e) => {
-            const guests = parseInt(e.target.value) || 7;
-            this.currentGuests = Math.max(7, Math.min(50, guests));
-            this.updatePaymentBreakdown();
-        });
+        const customGuestsInput = document.getElementById('customGuests');
+        if (customGuestsInput) {
+            customGuestsInput.addEventListener('input', (e) => {
+                const guests = parseInt(e.target.value) || 7;
+                this.currentGuests = Math.max(7, Math.min(50, guests));
+                this.updatePaymentBreakdown();
+            });
+        }
         
         // Show tips button
-        this.showTipsBtn.addEventListener('click', () => {
-            this.generateRecommendations();
-        });
+        if (this.showTipsBtn) {
+            this.showTipsBtn.addEventListener('click', () => {
+                this.generateRecommendations();
+            });
+        }
         
         // Keyboard support for accessibility
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !this.showTipsBtn.disabled) {
-                this.generateRecommendations();
-            }
-        });
+        if (document.addEventListener) {
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && this.showTipsBtn && !this.showTipsBtn.disabled) {
+                    this.generateRecommendations();
+                }
+            });
+        }
     }
     
     /**
      * Updates the total bill display (bill + tax)
      */
     updateTotalBill() {
-        const billAmount = parseFloat(this.billInput.value) || 0;
-        const taxAmount = parseFloat(this.taxInput.value) || 0;
+        const billAmount = parseFloat(this.billInput?.value) || 0;
+        const taxAmount = parseFloat(this.taxInput?.value) || 0;
         const total = billAmount + taxAmount;
         
-        this.totalDisplay.textContent = this.formatCurrency(total);
-        
-        // Update display styling based on whether values are entered
-        if (total > 0) {
-            this.totalDisplay.classList.add('has-value');
-        } else {
-            this.totalDisplay.classList.remove('has-value');
+        if (this.totalDisplay) {
+            this.totalDisplay.textContent = this.formatCurrency(total);
+            
+            // Update display styling based on whether values are entered
+            if (total > 0) {
+                this.totalDisplay.classList.add('has-value');
+            } else {
+                this.totalDisplay.classList.remove('has-value');
+            }
         }
     }
     
@@ -113,15 +130,17 @@ class TipCalculator {
      * Updates the show tips button state
      */
     updateShowTipsButton() {
-        const billAmount = parseFloat(this.billInput.value) || 0;
+        const billAmount = parseFloat(this.billInput?.value) || 0;
         const hasValidBill = billAmount > 0;
         
-        this.showTipsBtn.disabled = !hasValidBill;
-        
-        if (hasValidBill) {
-            this.showTipsBtn.classList.add('ready');
-        } else {
-            this.showTipsBtn.classList.remove('ready');
+        if (this.showTipsBtn) {
+            this.showTipsBtn.disabled = !hasValidBill;
+            
+            if (hasValidBill) {
+                this.showTipsBtn.classList.add('ready');
+            } else {
+                this.showTipsBtn.classList.remove('ready');
+            }
         }
     }
     
@@ -131,20 +150,31 @@ class TipCalculator {
      */
     selectGuests(guests) {
         // Remove active class from all buttons
-        document.querySelectorAll('.guest-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
+        if (document.querySelectorAll) {
+            document.querySelectorAll('.guest-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+        }
         
-        // Add active class to selected button
-        event.target.classList.add('active');
+        // Add active class to selected button (only in browser environment)
+        if (typeof event !== 'undefined' && event.target) {
+            event.target.classList.add('active');
+        }
         
         if (guests === '6+') {
             // Show custom input
-            document.querySelector('.custom-guests').style.display = 'flex';
-            this.currentGuests = parseInt(document.getElementById('customGuests').value) || 7;
+            const customGuestsSection = document.querySelector && document.querySelector('.custom-guests');
+            if (customGuestsSection) {
+                customGuestsSection.style.display = 'flex';
+            }
+            const customGuestsInput = document.getElementById && document.getElementById('customGuests');
+            this.currentGuests = parseInt(customGuestsInput?.value) || 7;
         } else {
             // Hide custom input and set guests
-            document.querySelector('.custom-guests').style.display = 'none';
+            const customGuestsSection = document.querySelector && document.querySelector('.custom-guests');
+            if (customGuestsSection) {
+                customGuestsSection.style.display = 'none';
+            }
             this.currentGuests = parseInt(guests);
         }
         
