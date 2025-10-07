@@ -2,7 +2,157 @@
    TIP CALCULATOR APPLICATION STYLES
    ====================================== */
 
-/* Universal reset to ens/* ======================================
+/* Universal reset to ensure consistent styling across browsers */
+* {
+    margin: 0;              /* Remove default margins */
+    padding: 0;             /* Remove default padding */
+    box-sizing: border-box; /* Include padding and border in element's total width/height */
+}
+
+/* Main body styling - creates the overall page layout */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Arial', sans-serif;
+    /* Create gradient background from blue to purple */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;      /* Ensure full viewport height */
+    display: flex;          /* Use flexbox for centering */
+    justify-content: center; /* Center horizontally */
+    align-items: flex-start; /* Align to top for scrollable content */
+    padding: 20px;          /* Add padding for mobile devices */
+    line-height: 1.5;       /* Improved readability */
+}
+
+/* ======================================
+   TIP CALCULATOR CONTAINER
+   ====================================== */
+
+/* Main tip calculator container */
+.tip-calculator {
+    background: #2c3e50;               /* Dark blue-gray background */
+    border-radius: 20px;               /* Rounded corners for modern look */
+    padding: 25px;                     /* Internal spacing */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); /* Drop shadow for depth */
+    max-width: 420px;                  /* Wider for tip calculator content */
+    width: 100%;                       /* Full width on smaller screens */
+    margin: 10px 0;                    /* Vertical margin for scrollable content */
+}
+
+/* Calculator header */
+.calculator-header {
+    text-align: center;
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #34495e;
+}
+
+.calculator-header h1 {
+    color: #ecf0f1;
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.calculator-header p {
+    color: #bdc3c7;
+    font-size: 0.9rem;
+}
+
+/* ======================================
+   INPUT SECTIONS (A, B, C, D)
+   ====================================== */
+
+.input-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+/* Individual input groups */
+.input-group, .display-group, .guest-section {
+    background: #34495e;
+    border-radius: 12px;
+    padding: 18px;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.input-group:focus-within {
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+/* Labels */
+.input-group label, .display-group label, .guest-section label {
+    display: block;
+    color: #ecf0f1;
+    font-weight: 600;
+    margin-bottom: 10px;
+    font-size: 1rem;
+}
+
+/* Input wrapper for currency symbol */
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.currency-symbol {
+    position: absolute;
+    left: 12px;
+    color: #bdc3c7;
+    font-weight: bold;
+    z-index: 1;
+    font-size: 1.2rem;
+}
+
+/* Input fields */
+input[type="number"] {
+    width: 100%;
+    padding: 12px 15px 12px 35px;
+    font-size: 1.2rem;
+    border: 2px solid #2c3e50;
+    border-radius: 8px;
+    background: #2c3e50;
+    color: #ecf0f1;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+input[type="number"]:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    background: #1a252f;
+}
+
+input[type="number"]::placeholder {
+    color: #7f8c8d;
+}
+
+/* Calculated total display */
+.calculated-display {
+    background: #1a252f;
+    color: #2ecc71;
+    font-size: 1.8rem;
+    font-weight: bold;
+    text-align: center;
+    padding: 15px;
+    border-radius: 8px;
+    border: 2px solid #27ae60;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+
+.calculated-display.has-value {
+    color: #00ff41;
+    border-color: #00ff41;
+    box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+}
+
+/* ======================================
    GUEST SELECTOR (SECTION D)
    ====================================== */
 
