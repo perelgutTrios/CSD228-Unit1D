@@ -56,4 +56,21 @@ describe('TipCalculator Basic Tests', () => {
     expect(tipCalculator.formatCurrency(0)).toBe('$0.00');
     expect(tipCalculator.formatCurrency(1234.56)).toBe('$1,234.56');
   });
+
+  test('smartRoundPerPerson method works correctly', () => {
+    // Under $5: round up to next $0.25
+    expect(tipCalculator.smartRoundPerPerson(3.10)).toBe(3.25);
+    expect(tipCalculator.smartRoundPerPerson(4.76)).toBe(5.00);
+    expect(tipCalculator.smartRoundPerPerson(4.00)).toBe(4.00);
+    
+    // $5-10: round up to next $0.50
+    expect(tipCalculator.smartRoundPerPerson(6.25)).toBe(6.50);
+    expect(tipCalculator.smartRoundPerPerson(9.76)).toBe(10.00);
+    expect(tipCalculator.smartRoundPerPerson(7.50)).toBe(7.50);
+    
+    // Over $10: round to nearest $1.00
+    expect(tipCalculator.smartRoundPerPerson(12.25)).toBe(12.00);
+    expect(tipCalculator.smartRoundPerPerson(12.75)).toBe(13.00);
+    expect(tipCalculator.smartRoundPerPerson(15.00)).toBe(15.00);
+  });
 });
