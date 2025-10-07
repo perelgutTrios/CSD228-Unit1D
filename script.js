@@ -452,6 +452,24 @@ class TipCalculator {
     }
     
     /**
+     * Smart rounding for per-person payment amounts
+     * @param {number} amount - The per-person amount to round
+     * @returns {number} - The rounded amount
+     */
+    smartRoundPerPerson(amount) {
+        if (amount < 5) {
+            // Under $5: round up to next $0.25
+            return Math.ceil(amount / 0.25) * 0.25;
+        } else if (amount <= 10) {
+            // $5-10: round up to next $0.50
+            return Math.ceil(amount / 0.50) * 0.50;
+        } else {
+            // Over $10: round to nearest $1.00
+            return Math.round(amount);
+        }
+    }
+
+    /**
      * Calculates and updates the payment breakdown
      */
     updatePaymentBreakdown() {
@@ -459,16 +477,28 @@ class TipCalculator {
         
         const billAmount = parseFloat(this.billInput.value) || 0;
         const taxAmount = parseFloat(this.taxInput.value) || 0;
-        const tipAmount = this.recommendations[this.selectedOption].userTip;
-        const totalPayment = billAmount + taxAmount + tipAmount;
-        const perPerson = totalPayment / this.currentGuests;
+        const originalTipAmount = this.recommendations[this.selectedOption].userTip;
+        const originalTotalPayment = billAmount + taxAmount + originalTipAmount;
+        const originalPerPerson = originalTotalPayment / this.currentGuests;
+        
+        // Apply smart rounding to per-person amount
+        const roundedPerPerson = this.smartRoundPerPerson(originalPerPerson);
+        const adjustedTotalPayment = roundedPerPerson * this.currentGuests;
+        const adjustedTipAmount = adjustedTotalPayment - billAmount - taxAmount;
+        
+        // Calculate actual tip percentage
+        const actualTipPercentage = billAmount > 0 ? (adjustedTipAmount / billAmount) * 100 : 0;
         
         const breakdown = {
             billAmount: billAmount,
             taxAmount: taxAmount,
-            tipAmount: tipAmount,
-            totalPayment: totalPayment,
-            perPerson: perPerson,
+            originalTipAmount: originalTipAmount,
+            adjustedTipAmount: adjustedTipAmount,
+            originalTotalPayment: originalTotalPayment,
+            adjustedTotalPayment: adjustedTotalPayment,
+            originalPerPerson: originalPerPerson,
+            roundedPerPerson: roundedPerPerson,
+            actualTipPercentage: actualTipPercentage,
             guests: this.currentGuests,
             optionLabel: this.recommendations[this.selectedOption].label
         };
@@ -482,6 +512,9 @@ class TipCalculator {
      */
     displayPaymentBreakdown(breakdown) {
         const container = document.getElementById('paymentBreakdown');
+        
+        const tipAdjusted = Math.abs(breakdown.adjustedTipAmount - breakdown.originalTipAmount) > 0.01;
+        const perPersonAdjusted = Math.abs(breakdown.roundedPerPerson - breakdown.originalPerPerson) > 0.01;
         
         container.innerHTML = `
             <div class="breakdown-header">
@@ -500,12 +533,13 @@ class TipCalculator {
                 </div>
                 <div class="breakdown-line">
                     <span>Tip:</span>
-                    <span>${this.formatCurrency(breakdown.tipAmount)}</span>
+                    <span>${this.formatCurrency(breakdown.adjustedTipAmount)}</span>
+                    ${tipAdjusted ? `<small class="adjustment-note">(adjusted from ${this.formatCurrency(breakdown.originalTipAmount)})</small>` : ''}
                 </div>
                 <div class="breakdown-separator"></div>
                 <div class="breakdown-line total">
                     <span><strong>Total Payment:</strong></span>
-                    <span><strong>${this.formatCurrency(breakdown.totalPayment)}</strong></span>
+                    <span><strong>${this.formatCurrency(breakdown.adjustedTotalPayment)}</strong></span>
                 </div>
                 
                 <div class="per-person-section">
@@ -513,7 +547,12 @@ class TipCalculator {
                         <span>👥 For ${breakdown.guests} guest${breakdown.guests !== 1 ? 's' : ''}:</span>
                     </div>
                     <div class="per-person-amount">
-                        <span><strong>Each person pays: ${this.formatCurrency(breakdown.perPerson)}</strong></span>
+                        <span><strong>Each person pays: ${this.formatCurrency(breakdown.roundedPerPerson)}</strong></span>
+                        ${perPersonAdjusted ? `<small class="adjustment-note">(rounded from ${this.formatCurrency(breakdown.originalPerPerson)})</small>` : ''}
+                    </div>
+                    
+                    <div class="tip-percentage-info">
+                        <p><em>The actual tip percentage is ${breakdown.actualTipPercentage.toFixed(1)}% with a total tip of ${this.formatCurrency(breakdown.adjustedTipAmount)}</em></p>
                     </div>
                 </div>
             </div>
@@ -564,16 +603,24 @@ class TipCalculator {
         
         const billAmount = parseFloat(this.billInput.value) || 0;
         const taxAmount = parseFloat(this.taxInput.value) || 0;
-        const tipAmount = this.recommendations[this.selectedOption].userTip;
-        const totalPayment = billAmount + taxAmount + tipAmount;
-        const perPerson = totalPayment / this.currentGuests;
+        const originalTipAmount = this.recommendations[this.selectedOption].userTip;
+        const originalTotalPayment = billAmount + taxAmount + originalTipAmount;
+        const originalPerPerson = originalTotalPayment / this.currentGuests;
+        
+        // Apply smart rounding
+        const roundedPerPerson = this.smartRoundPerPerson(originalPerPerson);
+        const adjustedTotalPayment = roundedPerPerson * this.currentGuests;
+        const adjustedTipAmount = adjustedTotalPayment - billAmount - taxAmount;
+        const actualTipPercentage = billAmount > 0 ? (adjustedTipAmount / billAmount) * 100 : 0;
         
         const text = `Payment Breakdown:
 Bill: ${this.formatCurrency(billAmount)}
 Tax: ${this.formatCurrency(taxAmount)}
-Tip: ${this.formatCurrency(tipAmount)}
-Total: ${this.formatCurrency(totalPayment)}
-Per person (${this.currentGuests} guests): ${this.formatCurrency(perPerson)}`;
+Tip: ${this.formatCurrency(adjustedTipAmount)}
+Total: ${this.formatCurrency(adjustedTotalPayment)}
+Per person (${this.currentGuests} guests): ${this.formatCurrency(roundedPerPerson)}
+
+The actual tip percentage is ${actualTipPercentage.toFixed(1)}% with a total tip of ${this.formatCurrency(adjustedTipAmount)}`;
         
         navigator.clipboard.writeText(text).then(() => {
             // Show feedback

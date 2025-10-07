@@ -658,6 +658,39 @@ input[type="number"]::placeholder {
     text-align: center;
 }
 
+/* Adjustment notes for rounded values */
+.adjustment-note {
+    display: block;
+    color: #95a5a6;
+    font-size: 0.8rem;
+    font-weight: normal;
+    font-style: italic;
+    margin-top: 4px;
+}
+
+/* Tip percentage information */
+.tip-percentage-info {
+    margin-top: 15px;
+    padding: 12px;
+    background: rgba(46, 204, 113, 0.1);
+    border: 1px solid #2ecc71;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.tip-percentage-info p {
+    color: #ecf0f1;
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.tip-percentage-info em {
+    color: #2ecc71;
+    font-style: normal;
+    font-weight: 600;
+}
+
 /* Breakdown actions */
 .breakdown-actions {
     display: flex;

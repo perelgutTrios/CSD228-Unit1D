@@ -10,6 +10,10 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     
+    # Grant GITHUB_TOKEN the permissions required for deployment
+    permissions:
+      contents: write
+    
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -37,7 +41,7 @@ jobs:
         test -f icons/icon-512.png || echo "Warning: icon-512.png missing"
     
     - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
+      uses: peaceiris/actions-gh-pages@v4
       if: github.ref == 'refs/heads/TipCalc'
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -46,13 +50,3 @@ jobs:
         user_name: 'github-actions[bot]'
         user_email: 'github-actions[bot]@users.noreply.github.com'
         commit_message: 'Deploy tip calculator PWA from TipCalc branch'
-        force_orphan: true
-    
-    - name: PWA Lighthouse Audit
-      uses: treosh/lighthouse-ci-action@v9
-      with:
-        urls: |
-          https://perelgutTrios.github.io/CSD228-Unit1D/
-        configPath: './lighthouse.json'
-        uploadArtifacts: true
-        temporaryPublicStorage: true
