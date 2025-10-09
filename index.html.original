@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Set character encoding to UTF-8 for proper text display -->
+    <meta charset="UTF-8">
+    
+    <!-- Configure viewport for responsive design on mobile devices -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- PWA Configuration -->
+    <meta name="theme-color" content="#2196F3">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Tip Calculator">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- iPhone/iPad Specific Icons -->
+    <link rel="apple-touch-icon" href="icons/icon-180.png">
+    <link rel="apple-touch-icon" sizes="57x57" href="icons/icon-57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="icons/icon-60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="icons/icon-72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="icons/icon-76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="icons/icon-114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="icons/icon-120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="icons/icon-144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png">
+    
+    <!-- iPhone Splash Screens -->
+    <link rel="apple-touch-startup-image" href="icons/splash-640x1136.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+    <link rel="apple-touch-startup-image" href="icons/splash-750x1334.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+    <link rel="apple-touch-startup-image" href="icons/splash-1242x2208.png" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+    <link rel="apple-touch-startup-image" href="icons/splash-1125x2436.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+    <link rel="apple-touch-startup-image" href="icons/splash-1242x2688.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+    
+    <!-- Standard favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="icons/icon-16.png">
+    
+    <!-- Microsoft Tiles -->
+    <meta name="msapplication-TileColor" content="#2196F3">
+    <meta name="msapplication-TileImage" content="icons/icon-144.png">
+    
+    <!-- Page title displayed in browser tab -->
+    <title>Tip Calculator - Smart Rounding & Bill Splitting</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Link to external CSS stylesheet for styling -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Main tip calculator container -->
+    <div class="tip-calculator">
+        <!-- Header -->
+        <div class="calculator-header">
+            <h1>💰 Tip Calculator</h1>
+            <p>Smart rounding & bill splitting</p>
+        </div>
+        
+        <!-- Input sections a, b, c, d -->
+        <div class="input-sections">
+            <!-- Section A: Bill Amount (before tax) -->
+            <div class="input-group">
+                <label for="billAmount">💵 a) Bill Amount (before tax)</label>
+                <div class="input-wrapper">
+                    <span class="currency-symbol">$</span>
+                    <input type="number" id="billAmount" placeholder="0.00" step="0.01" min="0">
+                </div>
+            </div>
+            
+            <!-- Section B: Tax Amount -->
+            <div class="input-group">
+                <label for="taxAmount">📊 b) Tax Amount</label>
+                <div class="input-wrapper">
+                    <span class="currency-symbol">$</span>
+                    <input type="number" id="taxAmount" placeholder="0.00" step="0.01" min="0">
+                </div>
+            </div>
+            
+            <!-- Section C: Total Bill (calculated) -->
+            <div class="display-group">
+                <label>🧾 c) Total Bill</label>
+                <div id="totalBill" class="calculated-display">$0.00</div>
+            </div>
+            
+            <!-- Section D: Number of Guests -->
+            <div class="guest-section">
+                <label>👥 d) Number of Guests</label>
+                <div class="guest-selector">
+                    <button class="guest-btn active" data-guests="1">1</button>
+                    <button class="guest-btn" data-guests="2">2</button>
+                    <button class="guest-btn" data-guests="3">3</button>
+                    <button class="guest-btn" data-guests="4">4</button>
+                    <button class="guest-btn" data-guests="5">5</button>
+                    <button class="guest-btn" data-guests="6">6+</button>
+                </div>
+                <div class="custom-guests" style="display: none;">
+                    <input type="number" id="customGuests" min="7" max="50" placeholder="7">
+                    <span>guests</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Action Button -->
+        <button id="showTips" class="show-tips-btn" disabled>
+            🎯 Show Recommended Tips
+        </button>
+        
+        <!-- Tip Recommendations Section (initially hidden) -->
+        <div id="recommendations" class="recommendations-section" style="display: none;">
+            <h3>💡 Tip Recommendations</h3>
+            <p class="rounding-info" id="roundingInfo"></p>
+            <div id="tipOptions" class="tip-options">
+                <!-- Tip options will be generated here -->
+            </div>
+        </div>
+        
+        <!-- Payment Breakdown Section (initially hidden) -->
+        <div id="paymentBreakdown" class="payment-breakdown" style="display: none;">
+            <!-- Payment breakdown will be displayed here -->
+        </div>
+    </div>
+    
+    <!-- Load JavaScript file for calculator functionality -->
+    <script src="script.js"></script>
+    
+    <!-- PWA Service Worker Registration -->
+    <script>
+        // Enhanced service worker registration with better iOS support
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('./sw.js', {
+                    scope: './'
+                })
+                .then(function(registration) {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    
+                    // Check for updates
+                    registration.addEventListener('updatefound', () => {
+                        console.log('New service worker available');
+                    });
+                })
+                .catch(function(err) {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+        
+        // iOS installation prompt enhancement
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            console.log('Install prompt triggered');
+            deferredPrompt = e;
+        });
+        
+        // iOS-specific installation detection
+        function isIOS() {
+            return /iPad|iPhone|iPod/.test(navigator.userAgent);
+        }
+        
+        function isInStandaloneMode() {
+            return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+        }
+        
+        // Show iOS installation instructions if needed
+        if (isIOS() && !isInStandaloneMode()) {
+            console.log('iOS device detected - PWA installation available');
+        }
+    </script>
+</body>
+</html>
