@@ -2,6 +2,12 @@ import 'package:flutter/foundation.dart';
 import '../utils/currency_formatter.dart';
 import '../utils/smart_rounding.dart';
 
+/// Screen states for navigation
+enum AppScreen { input, results }
+
+/// Tip adjustment modes
+enum TipAdjustmentMode { tipPerPerson, exactTip, roundOut }
+
 /// Model class that handles all tip calculation logic and state management
 class TipCalculatorModel extends ChangeNotifier {
   // Input values
@@ -37,11 +43,14 @@ class TipCalculatorModel extends ChangeNotifier {
     ),
   };
   
+  // Screen state
+  AppScreen _currentScreen = AppScreen.input;
+  
   // Current state
   String? _selectedTipOption;
   double _customTipRate = 5.0; // percentage
-  Map<String, double> _userTipOverrides = {};
-  List<TipRecommendation> _recommendations = [];
+  final Map<String, double> _userTipOverrides = {};
+  final List<TipRecommendation> _recommendations = [];
   PaymentBreakdown? _paymentBreakdown;
   
   // Getters
@@ -56,6 +65,7 @@ class TipCalculatorModel extends ChangeNotifier {
   double get totalBill => _billAmount + _taxAmount;
   bool get hasValidBill => _billAmount > 0;
   bool get hasRecommendations => _recommendations.isNotEmpty;
+  AppScreen get currentScreen => _currentScreen;
   
   // Setters with validation
   void setBillAmount(double amount) {
@@ -135,16 +145,51 @@ class TipCalculatorModel extends ChangeNotifier {
         userTip: userTip,
         roundingInfo: roundingResult,
         isOverridden: (userTip - roundingResult.adjustedTip).abs() > 0.01,
-      ));
+      ),);
     }
     
     notifyListeners();
   }
   
-  /// Select a tip option and calculate payment breakdown
+  /// Select a tip option and navigate to results screen
   void selectTipOption(String tipOptionKey) {
     _selectedTipOption = tipOptionKey;
     _updatePaymentBreakdown();
+    _currentScreen = AppScreen.results;
+    notifyListeners();
+  }
+  
+  /// Navigate back to input screen
+  void goBackToInput() {
+    _currentScreen = AppScreen.input;
+    notifyListeners();
+  }
+  
+  /// Update tip amount from results screen with different modes
+  void updateTipAmount(double amount, TipAdjustmentMode mode) {
+    if (_selectedTipOption == null) return;
+    
+    switch (mode) {
+      case TipAdjustmentMode.tipPerPerson:
+        // Treat amount as tip per person, multiply by number of guests
+        final totalTip = amount * _numberOfGuests;
+        _userTipOverrides[_selectedTipOption!] = totalTip;
+        _updatePaymentBreakdownExact(totalTip);
+        break;
+        
+      case TipAdjustmentMode.exactTip:
+        // Use exact tip amount, no rounding
+        _userTipOverrides[_selectedTipOption!] = amount;
+        _updatePaymentBreakdownExact(amount);
+        break;
+        
+      case TipAdjustmentMode.roundOut:
+        // Use smart rounding (current behavior)
+        _userTipOverrides[_selectedTipOption!] = amount;
+        _updatePaymentBreakdown();
+        break;
+    }
+    
     notifyListeners();
   }
   
@@ -175,10 +220,19 @@ class TipCalculatorModel extends ChangeNotifier {
   void _updatePaymentBreakdown() {
     if (_selectedTipOption == null) return;
     
-    final recommendation = _recommendations
-        .firstWhere((rec) => rec.tipRate.key == _selectedTipOption);
+    // Find the recommendation safely
+    TipRecommendation? recommendation;
+    try {
+      recommendation = _recommendations
+          .firstWhere((rec) => rec.tipRate.key == _selectedTipOption);
+    } catch (e) {
+      // Recommendation not found - this shouldn't happen but let's handle it gracefully
+      return;
+    }
     
-    final originalTotal = _billAmount + _taxAmount + recommendation.userTip;
+    // Use user override tip if available, otherwise use recommendation tip
+    final actualTip = _userTipOverrides[_selectedTipOption] ?? recommendation.userTip;
+    final originalTotal = _billAmount + _taxAmount + actualTip;
     final originalPerPerson = originalTotal / _numberOfGuests;
     
     // Apply smart per-person rounding
@@ -205,14 +259,46 @@ class TipCalculatorModel extends ChangeNotifier {
           (roundedPerPerson - originalPerPerson).abs() > 0.01,
     );
   }
+  
+  /// Update payment breakdown with exact tip amount (no smart rounding)
+  void _updatePaymentBreakdownExact(double exactTipAmount) {
+    if (_selectedTipOption == null) return;
+    
+    // Find the recommendation safely
+    TipRecommendation? recommendation;
+    try {
+      recommendation = _recommendations
+          .firstWhere((rec) => rec.tipRate.key == _selectedTipOption);
+    } catch (e) {
+      return;
+    }
+    
+    // Use exact tip amount with no rounding
+    final adjustedTotal = _billAmount + _taxAmount + exactTipAmount;
+    final roundedPerPerson = adjustedTotal / _numberOfGuests;
+    
+    // Calculate actual tip percentage
+    final actualTipPercentage = _billAmount > 0 ? (exactTipAmount / _billAmount) * 100.0 : 0.0;
+    
+    _paymentBreakdown = PaymentBreakdown(
+      billAmount: _billAmount,
+      taxAmount: _taxAmount,
+      originalTip: recommendation.userTip,
+      adjustedTip: exactTipAmount,
+      originalTotal: _billAmount + _taxAmount + recommendation.userTip,
+      adjustedTotal: adjustedTotal,
+      originalPerPerson: (_billAmount + _taxAmount + recommendation.userTip) / _numberOfGuests,
+      roundedPerPerson: roundedPerPerson,
+      actualTipPercentage: actualTipPercentage,
+      numberOfGuests: _numberOfGuests,
+      tipOptionLabel: recommendation.tipRate.label,
+      isAdjusted: (exactTipAmount - recommendation.userTip).abs() > 0.01,
+    );
+  }
 }
 
 /// Represents a tip rate option
 class TipRate {
-  final String key;
-  final double rate;
-  final String label;
-  final String description;
   
   const TipRate({
     required this.key,
@@ -220,18 +306,14 @@ class TipRate {
     required this.label,
     required this.description,
   });
+  final String key;
+  final double rate;
+  final String label;
+  final String description;
 }
 
 /// Represents a tip recommendation with rounding information
 class TipRecommendation {
-  final TipRate tipRate;
-  final double exactTip;
-  final double exactTotal;
-  final double suggestedTip;
-  final double suggestedTotal;
-  final double userTip;
-  final SmartRoundingResult roundingInfo;
-  final bool isOverridden;
   
   const TipRecommendation({
     required this.tipRate,
@@ -243,22 +325,18 @@ class TipRecommendation {
     required this.roundingInfo,
     required this.isOverridden,
   });
+  final TipRate tipRate;
+  final double exactTip;
+  final double exactTotal;
+  final double suggestedTip;
+  final double suggestedTotal;
+  final double userTip;
+  final SmartRoundingResult roundingInfo;
+  final bool isOverridden;
 }
 
 /// Represents the final payment breakdown with per-person amounts
 class PaymentBreakdown {
-  final double billAmount;
-  final double taxAmount;
-  final double originalTip;
-  final double adjustedTip;
-  final double originalTotal;
-  final double adjustedTotal;
-  final double originalPerPerson;
-  final double roundedPerPerson;
-  final double actualTipPercentage;
-  final int numberOfGuests;
-  final String tipOptionLabel;
-  final bool isAdjusted;
   
   const PaymentBreakdown({
     required this.billAmount,
@@ -274,6 +352,18 @@ class PaymentBreakdown {
     required this.tipOptionLabel,
     required this.isAdjusted,
   });
+  final double billAmount;
+  final double taxAmount;
+  final double originalTip;
+  final double adjustedTip;
+  final double originalTotal;
+  final double adjustedTotal;
+  final double originalPerPerson;
+  final double roundedPerPerson;
+  final double actualTipPercentage;
+  final int numberOfGuests;
+  final String tipOptionLabel;
+  final bool isAdjusted;
   
   String generateSummaryText() {
     return '''Payment Breakdown:

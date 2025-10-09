@@ -88,7 +88,7 @@ class TipCalculatorApp extends StatelessWidget {
           return MediaQuery(
             data: MediaQuery.of(context).copyWith(
               // Ensure text scaling doesn't go below readable levels
-              textScaleFactor: MediaQuery.of(context).textScaleFactor.clamp(0.8, 1.5),
+              textScaler: TextScaler.linear(MediaQuery.of(context).textScaler.scale(1.0).clamp(0.8, 1.5)),
             ),
             child: child!,
           );

@@ -4,40 +4,44 @@ import '../models/tip_calculator_model.dart';
 import 'input_section.dart';
 import 'recommendations_section.dart';
 import 'payment_breakdown_section.dart';
+import 'results_screen.dart';
 
 class TipCalculatorScreen extends StatelessWidget {
   const TipCalculatorScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            // Responsive layout based on screen width
-            final isWideScreen = constraints.maxWidth > 900;
-            final isTablet = constraints.maxWidth > 600 && constraints.maxWidth <= 900;
-            
-            return Center(
-              child: Container(
-                constraints: BoxConstraints(
-                  maxWidth: isWideScreen ? 1200 : (isTablet ? 800 : double.infinity),
-                ),
-                child: isWideScreen
+    return Consumer<TipCalculatorModel>(
+      builder: (context, model, child) {
+        // Show results screen if a tip is selected
+        if (model.currentScreen == AppScreen.results) {
+          return const ResultsScreen();
+        }
+        
+        // Otherwise show input screen
+        return Scaffold(
+          body: SafeArea(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                // Responsive layout based on screen width
+                final isWideScreen = constraints.maxWidth > 900;
+                
+                return isWideScreen
                     ? _buildWideScreenLayout(context)
-                    : _buildNarrowScreenLayout(context),
-              ),
-            );
-          },
-        ),
-      ),
+                    : _buildNarrowScreenLayout(context);
+              },
+            ),
+          ),
+        );
+      },
     );
   }
   
   Widget _buildWideScreenLayout(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Row(
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Left side - Input section
@@ -47,11 +51,11 @@ class TipCalculatorScreen extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: Column(
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisSize: MainAxisSize.max,
                   children: [
                     _buildHeader(context),
                     const SizedBox(height: 24),
-                    const InputSection(),
+                    const Expanded(child: InputSection()),
                   ],
                 ),
               ),
@@ -93,6 +97,7 @@ class TipCalculatorScreen extends StatelessWidget {
                     }
                     
                     return const Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         RecommendationsSection(),
                         SizedBox(height: 16),
@@ -106,6 +111,7 @@ class TipCalculatorScreen extends StatelessWidget {
           ),
         ],
       ),
+    ),
     );
   }
   

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flutter Loading Test</title>
+    <base href="/CSD228 Fall 2025/Unit 1D/">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <div id="loading">Loading Flutter...</div>
+    <div id="status"></div>
+    
+    <script>
+        console.log('=== Flutter Loading Debug ===');
+        console.log('1. Page loaded');
+        
+        function updateStatus(message) {
+            document.getElementById('status').innerHTML += '<br>' + message;
+            console.log(message);
+        }
+        
+        updateStatus('2. Starting Flutter loading process...');
+    </script>
+    
+    <script src="flutter.js" defer onload="updateStatus('3. flutter.js loaded')" onerror="updateStatus('ERROR: flutter.js failed to load')"></script>
+    <script src="flutter_bootstrap.js" defer onload="updateStatus('4. flutter_bootstrap.js loaded')" onerror="updateStatus('ERROR: flutter_bootstrap.js failed to load')"></script>
+    
+    <script>
+        // Check if Flutter loaded after a delay
+        setTimeout(function() {
+            if (typeof _flutter !== 'undefined') {
+                updateStatus('5. _flutter object exists');
+                if (_flutter.loader) {
+                    updateStatus('6. _flutter.loader exists');
+                } else {
+                    updateStatus('ERROR: _flutter.loader is undefined');
+                }
+            } else {
+                updateStatus('ERROR: _flutter is undefined after 2 seconds');
+            }
+        }, 2000);
+        
+        // Listen for flutter events
+        window.addEventListener('flutter-first-frame', function() {
+            updateStatus('SUCCESS: flutter-first-frame event fired!');
+            document.getElementById('loading').style.display = 'none';
+        });
+        
+        // Check for errors
+        window.addEventListener('error', function(e) {
+            updateStatus('ERROR: ' + e.message + ' at ' + e.filename + ':' + e.lineno);
+        });
+    </script>
+</body>
+</html>

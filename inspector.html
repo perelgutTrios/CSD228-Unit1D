@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flutter App Inspector</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .info { background: #e3f2fd; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .step { background: white; padding: 10px; margin: 5px 0; border-left: 4px solid #2196F3; }
+        button { background: #2196F3; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 5px; }
+        button:hover { background: #1976D2; }
+        #results { background: white; padding: 15px; margin: 10px 0; border-radius: 5px; max-height: 300px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Flutter App Inspector</h1>
+    
+    <div class="info">
+        <h3>Payment Breakdown Debugging</h3>
+        <p>Click the button below to inspect the Flutter app and find out why the payment breakdown isn't showing.</p>
+    </div>
+    
+    <div class="step">
+        <h4>Instructions:</h4>
+        <ol>
+            <li>Make sure your Flutter tip calculator is open in another tab</li>
+            <li>Enter bill amount, tax, and number of guests</li>
+            <li>Click a "Calculate with this tip" button (it should change to "✅ Selected")</li>
+            <li>Then click the inspection button below</li>
+        </ol>
+    </div>
+    
+    <button onclick="inspectFlutterApp()">🔍 Inspect Payment Breakdown</button>
+    <button onclick="clearResults()">Clear Results</button>
+    
+    <div id="results"></div>
+    
+    <script>
+        function addResult(message, isError = false) {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.style.margin = '5px 0';
+            div.style.padding = '8px';
+            div.style.borderRadius = '3px';
+            div.style.backgroundColor = isError ? '#ffebee' : '#f3e5f5';
+            div.style.borderLeft = isError ? '4px solid #f44336' : '4px solid #9c27b0';
+            div.innerHTML = message;
+            results.appendChild(div);
+        }
+        
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+        }
+        
+        function inspectFlutterApp() {
+            clearResults();
+            addResult('🔍 Starting Flutter app inspection...');
+            
+            // Try to access the Flutter app in another window/tab
+            try {
+                // Look for Flutter-related elements in the current page's context
+                addResult('📋 Looking for payment breakdown elements...');
+                
+                // Create inspection instructions
+                addResult(`
+                    <strong>Manual Inspection Steps:</strong><br><br>
+                    
+                    <strong>Step 1:</strong> Go back to your Flutter app tab<br><br>
+                    
+                    <strong>Step 2:</strong> Right-click anywhere on the page and select "Inspect Element"<br><br>
+                    
+                    <strong>Step 3:</strong> In the Developer Tools, press <code>Ctrl+F</code> (or Cmd+F on Mac)<br><br>
+                    
+                    <strong>Step 4:</strong> Search for these terms one by one:<br>
+                    • <code>Payment Breakdown</code><br>
+                    • <code>paymentBreakdown</code><br>
+                    • <code>PaymentBreakdownSection</code><br><br>
+                    
+                    <strong>Step 5:</strong> If you find elements with those names, check if they have:<br>
+                    • <code>display: none</code> in their style<br>
+                    • <code>height: 0</code> or similar hiding styles<br>
+                    • Are positioned off-screen<br><br>
+                    
+                    <strong>Step 6:</strong> Also check the Console tab for any errors containing "PaymentBreakdown"<br><br>
+                    
+                    <strong>What to look for:</strong><br>
+                    • The payment breakdown might be rendered but hidden<br>
+                    • It might be positioned outside the visible area<br>
+                    • There might be a CSS or layout issue preventing it from showing
+                `);
+                
+            } catch (error) {
+                addResult('❌ Cannot directly access Flutter app: ' + error.message, true);
+            }
+        }
+    </script>
+    
+    <p><a href="index.html">🔙 Go Back to Flutter App</a></p>
+</body>
+</html>
