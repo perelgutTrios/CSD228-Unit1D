@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import '../models/tip_calculator_model.dart';
 import '../utils/currency_formatter.dart';
 
@@ -13,6 +14,34 @@ class ResultsScreen extends StatefulWidget {
 
 class _ResultsScreenState extends State<ResultsScreen> {
   final TextEditingController _tipController = TextEditingController();
+
+  void _shareTipCalculation(PaymentBreakdown breakdown) {
+    final text = '''
+💰 Tip Calculator Results
+
+🧾 Bill Details:
+• Bill Amount: ${CurrencyFormatter.format(breakdown.billAmount)}
+• Tax Amount: ${CurrencyFormatter.format(breakdown.taxAmount)}
+• Number of Guests: ${breakdown.numberOfGuests}
+
+💡 Tip Calculation:
+• Service Level: ${breakdown.tipOptionLabel}
+• Tip Amount: ${CurrencyFormatter.format(breakdown.adjustedTip)} (${breakdown.actualTipPercentage.toStringAsFixed(1)}%)
+• Per Person: ${CurrencyFormatter.format(breakdown.roundedPerPerson)}
+
+💳 Final Payment:
+• Total Bill: ${CurrencyFormatter.format(breakdown.adjustedTotal)}
+• Per Person: ${CurrencyFormatter.format(breakdown.roundedPerPerson)}
+
+Calculated with Flutter Tip Calculator
+''';
+
+    Share.share(
+      text,
+      subject:
+          'Tip Calculator Results - ${CurrencyFormatter.format(breakdown.adjustedTotal)} total',
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +65,14 @@ class _ResultsScreenState extends State<ResultsScreen> {
               icon: const Icon(Icons.arrow_back),
               onPressed: () => model.goBackToInput(),
             ),
+            actions: [
+              // Share button for mobile sharing
+              IconButton(
+                icon: const Icon(Icons.share),
+                onPressed: () => _shareTipCalculation(breakdown),
+                tooltip: 'Share calculation',
+              ),
+            ],
           ),
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(20.0),
@@ -51,24 +88,30 @@ class _ResultsScreenState extends State<ResultsScreen> {
                       children: [
                         Text(
                           '📋 Payment Summary',
-                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineMedium
+                              ?.copyWith(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
                         ),
                         const SizedBox(height: 20),
-                        
+
                         // Bill breakdown
                         _buildAmountRow('Bill Amount:', breakdown.billAmount),
                         const SizedBox(height: 8),
                         _buildAmountRow('Tax Amount:', breakdown.taxAmount),
                         const SizedBox(height: 8),
-                        _buildAmountRow('Tip Amount:', breakdown.adjustedTip, isHighlight: true),
+                        _buildAmountRow('Tip Amount:', breakdown.adjustedTip,
+                            isHighlight: true),
                         const Divider(height: 32),
-                        _buildAmountRow('Total Amount:', breakdown.adjustedTotal, isTotal: true),
-                        
+                        _buildAmountRow(
+                            'Total Amount:', breakdown.adjustedTotal,
+                            isTotal: true),
+
                         const SizedBox(height: 24),
-                        
+
                         // Per person breakdown
                         Container(
                           width: double.infinity,
@@ -89,7 +132,8 @@ class _ResultsScreenState extends State<ResultsScreen> {
                               ),
                               const SizedBox(height: 8),
                               Text(
-                                CurrencyFormatter.format(breakdown.roundedPerPerson),
+                                CurrencyFormatter.format(
+                                    breakdown.roundedPerPerson),
                                 style: const TextStyle(
                                   fontSize: 32,
                                   fontWeight: FontWeight.bold,
@@ -100,9 +144,9 @@ class _ResultsScreenState extends State<ResultsScreen> {
                             ],
                           ),
                         ),
-                        
+
                         const SizedBox(height: 16),
-                        
+
                         // Tip percentage
                         Text(
                           'Actual tip: ${breakdown.actualTipPercentage.toStringAsFixed(1)}%',
@@ -116,9 +160,9 @@ class _ResultsScreenState extends State<ResultsScreen> {
                     ),
                   ),
                 ),
-                
+
                 const SizedBox(height: 20),
-                
+
                 // Adjust Tip Card
                 Card(
                   child: Padding(
@@ -128,20 +172,25 @@ class _ResultsScreenState extends State<ResultsScreen> {
                       children: [
                         Text(
                           '✏️ Adjust Tip Amount',
-                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineMedium
+                              ?.copyWith(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
                         ),
                         const SizedBox(height: 16),
-                        
                         Column(
                           children: [
                             TextField(
                               controller: _tipController,
-                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                      decimal: true),
                               inputFormatters: [
-                                FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'[0-9.]')),
                               ],
                               decoration: const InputDecoration(
                                 labelText: 'Tip Amount',
@@ -154,19 +203,23 @@ class _ResultsScreenState extends State<ResultsScreen> {
                               ),
                             ),
                             const SizedBox(height: 16),
-                            
+
                             // Three adjustment buttons
                             Row(
                               children: [
                                 Expanded(
                                   child: ElevatedButton(
                                     onPressed: () {
-                                      final amount = double.tryParse(_tipController.text) ?? 0.0;
-                                      model.updateTipAmount(amount, TipAdjustmentMode.tipPerPerson);
+                                      final amount = double.tryParse(
+                                              _tipController.text) ??
+                                          0.0;
+                                      model.updateTipAmount(amount,
+                                          TipAdjustmentMode.tipPerPerson);
                                     },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: const Color(0xFF2ECC71),
-                                      padding: const EdgeInsets.symmetric(vertical: 12),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12),
                                     ),
                                     child: const Text(
                                       'Tip Per\nPerson',
@@ -182,12 +235,16 @@ class _ResultsScreenState extends State<ResultsScreen> {
                                 Expanded(
                                   child: ElevatedButton(
                                     onPressed: () {
-                                      final amount = double.tryParse(_tipController.text) ?? 0.0;
-                                      model.updateTipAmount(amount, TipAdjustmentMode.exactTip);
+                                      final amount = double.tryParse(
+                                              _tipController.text) ??
+                                          0.0;
+                                      model.updateTipAmount(
+                                          amount, TipAdjustmentMode.exactTip);
                                     },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: const Color(0xFF3498DB),
-                                      padding: const EdgeInsets.symmetric(vertical: 12),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12),
                                     ),
                                     child: const Text(
                                       'Exact\nTip',
@@ -203,12 +260,16 @@ class _ResultsScreenState extends State<ResultsScreen> {
                                 Expanded(
                                   child: ElevatedButton(
                                     onPressed: () {
-                                      final amount = double.tryParse(_tipController.text) ?? 0.0;
-                                      model.updateTipAmount(amount, TipAdjustmentMode.roundOut);
+                                      final amount = double.tryParse(
+                                              _tipController.text) ??
+                                          0.0;
+                                      model.updateTipAmount(
+                                          amount, TipAdjustmentMode.roundOut);
                                     },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: const Color(0xFF9B59B6),
-                                      padding: const EdgeInsets.symmetric(vertical: 12),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12),
                                     ),
                                     child: const Text(
                                       'Round Out\nBill',
@@ -228,9 +289,9 @@ class _ResultsScreenState extends State<ResultsScreen> {
                     ),
                   ),
                 ),
-                
+
                 const SizedBox(height: 20),
-                
+
                 // Back button
                 SizedBox(
                   width: double.infinity,
@@ -257,7 +318,8 @@ class _ResultsScreenState extends State<ResultsScreen> {
     );
   }
 
-  Widget _buildAmountRow(String label, double amount, {bool isTotal = false, bool isHighlight = false}) {
+  Widget _buildAmountRow(String label, double amount,
+      {bool isTotal = false, bool isHighlight = false}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -266,9 +328,9 @@ class _ResultsScreenState extends State<ResultsScreen> {
           style: TextStyle(
             fontSize: isTotal ? 18 : 16,
             fontWeight: isTotal ? FontWeight.bold : FontWeight.w500,
-            color: isTotal 
-                ? const Color(0xFF2ECC71) 
-                : isHighlight 
+            color: isTotal
+                ? const Color(0xFF2ECC71)
+                : isHighlight
                     ? const Color(0xFF3498DB)
                     : const Color(0xFFBDC3C7),
           ),
@@ -278,9 +340,9 @@ class _ResultsScreenState extends State<ResultsScreen> {
           style: TextStyle(
             fontSize: isTotal ? 20 : 18,
             fontWeight: FontWeight.bold,
-            color: isTotal 
-                ? const Color(0xFF2ECC71) 
-                : isHighlight 
+            color: isTotal
+                ? const Color(0xFF2ECC71)
+                : isHighlight
                     ? const Color(0xFF3498DB)
                     : const Color(0xFFECF0F1),
             fontFamily: 'monospace',
