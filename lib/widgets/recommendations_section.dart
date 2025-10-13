@@ -49,7 +49,7 @@ class RecommendationsSection extends StatelessWidget {
                   ),
                 const SizedBox(height: 16),
                 ...model.recommendations.map((recommendation) =>
-                    _buildRecommendationCard(context, model, recommendation),),
+                    _buildRecommendationCard(context, model, recommendation,),),
               ],
             ),
           ),
