@@ -1,0 +1,296 @@
+name: 📱 iOS Multi-Build Pipeline
+
+on:
+  push:
+    branches: [ TipCalcFlutterNative ]
+    tags:
+      - 'v*'  # Trigger on version tags like v1.0.0
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Build Type'
+        required: true
+        default: 'development'
+        type: choice
+        options:
+          - development
+          - release
+          - simulator
+
+jobs:
+  validate:
+    name: ✅ Validate Flutter Project
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout Code
+      uses: actions/checkout@v4
+
+    - name: 🔧 Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.29.0'
+        channel: 'stable'
+
+    - name: 📦 Install Dependencies
+      run: flutter pub get
+
+    - name: 🔍 Analyze Code
+      run: flutter analyze
+
+    - name: 🧪 Run Tests
+      run: flutter test
+
+  build-ios-simulator:
+    name: 📱 Build for iOS Simulator
+    runs-on: macos-latest
+    needs: validate
+    if: ${{ github.event.inputs.build_type == 'simulator' || github.event.inputs.build_type == '' }}
+    
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: 🔧 Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.29.0'
+        channel: 'stable'
+        cache: true
+
+    - name: 📦 Get Dependencies
+      run: flutter pub get
+
+    - name: 🍎 Setup iOS
+      run: |
+        cd ios
+        pod install
+        cd ..
+
+    - name: 🏗️ Build iOS Simulator
+      run: flutter build ios --simulator --release
+
+    - name: 📦 Package Simulator Build
+      run: |
+        mkdir -p ios-simulator-build
+        cp -r build/ios/iphonesimulator/Runner.app ios-simulator-build/
+        echo "iOS Simulator Build - $(date)" > ios-simulator-build/README.txt
+        echo "Flutter Version: $(flutter --version | head -1)" >> ios-simulator-build/README.txt
+        echo "Build Type: Simulator" >> ios-simulator-build/README.txt
+        echo "Commit: ${{ github.sha }}" >> ios-simulator-build/README.txt
+
+    - name: ⬆️ Upload Simulator Build
+      uses: actions/upload-artifact@v4
+      with:
+        name: ios-simulator-${{ github.run_number }}
+        path: ios-simulator-build/
+        retention-days: 14
+
+  build-ios-device:
+    name: 📱 Build for iOS Device
+    runs-on: macos-latest
+    needs: validate
+    
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: 🔧 Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.29.0'
+        channel: 'stable'
+        cache: true
+
+    - name: 📦 Get Dependencies
+      run: flutter pub get
+
+    - name: 🍎 Setup iOS Dependencies
+      run: |
+        cd ios
+        pod install
+        cd ..
+
+    - name: 🏗️ Build iOS (No Codesign)
+      run: flutter build ios --release --no-codesign
+
+    - name: 🔨 Create Unsigned Archive
+      run: |
+        cd ios
+        xcodebuild -workspace Runner.xcworkspace \
+          -scheme Runner \
+          -configuration Release \
+          -destination generic/platform=iOS \
+          -archivePath build/Runner.xcarchive \
+          archive \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO \
+          DEVELOPMENT_TEAM=""
+
+    - name: 📱 Extract App Bundle
+      run: |
+        mkdir -p ios-device-build
+        
+        # Extract the .app from the archive
+        if [ -d "ios/build/Runner.xcarchive/Products/Applications/Runner.app" ]; then
+          cp -r "ios/build/Runner.xcarchive/Products/Applications/Runner.app" ios-device-build/
+          echo "✅ Successfully extracted Runner.app"
+        else
+          echo "❌ Could not find Runner.app in archive"
+          find ios/build -name "*.app" -type d
+        fi
+        
+        # Create build information
+        cat > ios-device-build/INSTALLATION_INSTRUCTIONS.md << 'EOF'
+        # iOS Device Installation Instructions
+        
+        ## Prerequisites
+        - macOS computer with Xcode installed
+        - iOS device connected via USB
+        - iOS device in Developer Mode
+        
+        ## Installation Steps
+        
+        ### Method 1: Using Xcode
+        1. Open Xcode
+        2. Go to Window > Devices and Simulators
+        3. Select your iOS device
+        4. Click the "+" button under "Installed Apps"
+        5. Navigate to and select the `Runner.app` file
+        6. Click "Install"
+        
+        ### Method 2: Using ios-deploy (Command Line)
+        ```bash
+        # Install ios-deploy if not already installed
+        npm install -g ios-deploy
+        
+        # Install the app on connected device
+        ios-deploy --bundle Runner.app
+        ```
+        
+        ### Method 3: Re-sign and Install
+        If you have an Apple Developer account:
+        ```bash
+        # Re-sign the app with your certificate
+        codesign --force --sign "iPhone Developer: Your Name" Runner.app
+        
+        # Install via Xcode or ios-deploy
+        ```
+        
+        ## Troubleshooting
+        - Ensure iOS device is in Developer Mode
+        - Trust the developer certificate in iOS Settings > General > VPN & Device Management
+        - Check that the device is connected and recognized by Xcode
+        EOF
+        
+        echo "Build Date: $(date)" > ios-device-build/BUILD_INFO.txt
+        echo "Flutter Version: $(flutter --version | head -1)" >> ios-device-build/BUILD_INFO.txt
+        echo "Build Type: iOS Device (Unsigned)" >> ios-device-build/BUILD_INFO.txt
+        echo "Commit: ${{ github.sha }}" >> ios-device-build/BUILD_INFO.txt
+        echo "Branch: ${{ github.ref_name }}" >> ios-device-build/BUILD_INFO.txt
+        
+        ls -la ios-device-build/
+
+    - name: ⬆️ Upload iOS Device Build
+      uses: actions/upload-artifact@v4
+      with:
+        name: ios-device-${{ github.run_number }}
+        path: ios-device-build/
+        retention-days: 30
+
+    - name: 📊 Create Release Summary
+      run: |
+        echo "## 🍎 iOS Build Pipeline Complete!" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### ✅ Build Information" >> $GITHUB_STEP_SUMMARY
+        echo "- **Build Number**: ${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Commit**: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+        echo "- **Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Flutter Version**: $(flutter --version | head -1)" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 📱 Available Downloads" >> $GITHUB_STEP_SUMMARY
+        echo "1. **iOS Device Build**: \`ios-device-${{ github.run_number }}\`" >> $GITHUB_STEP_SUMMARY
+        echo "   - Unsigned .app file for iOS devices" >> $GITHUB_STEP_SUMMARY
+        echo "   - Requires Xcode for installation" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        if [ "${{ github.event.inputs.build_type }}" = "simulator" ]; then
+          echo "2. **iOS Simulator Build**: \`ios-simulator-${{ github.run_number }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "   - .app file for iOS Simulator" >> $GITHUB_STEP_SUMMARY
+          echo "   - Can be installed directly in Xcode simulator" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+        fi
+        echo "### 📋 Next Steps" >> $GITHUB_STEP_SUMMARY
+        echo "1. Download the appropriate build artifact" >> $GITHUB_STEP_SUMMARY
+        echo "2. Follow the installation instructions included in the download" >> $GITHUB_STEP_SUMMARY
+        echo "3. For App Store distribution, you'll need to re-sign with your developer certificate" >> $GITHUB_STEP_SUMMARY
+
+  create-release:
+    name: 🚀 Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [build-ios-device, build-ios-simulator]
+    if: startsWith(github.ref, 'refs/tags/v')
+    
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: 📥 Download iOS Device Build
+      uses: actions/download-artifact@v4
+      with:
+        name: ios-device-${{ github.run_number }}
+        path: release-artifacts/ios-device/
+
+    - name: 📥 Download iOS Simulator Build (if available)
+      uses: actions/download-artifact@v4
+      with:
+        name: ios-simulator-${{ github.run_number }}
+        path: release-artifacts/ios-simulator/
+      continue-on-error: true
+
+    - name: 📦 Create Release Package
+      run: |
+        cd release-artifacts
+        zip -r ios-device-build.zip ios-device/
+        if [ -d "ios-simulator" ]; then
+          zip -r ios-simulator-build.zip ios-simulator/
+        fi
+        ls -la
+
+    - name: 🚀 Create GitHub Release
+      uses: ncipollo/release-action@v1
+      with:
+        artifacts: "release-artifacts/*.zip"
+        name: "Tip Calculator Flutter v${{ github.ref_name }}"
+        body: |
+          # 🎉 Tip Calculator Flutter Release ${{ github.ref_name }}
+          
+          ## 📱 iOS Native App
+          
+          This release includes native iOS builds of the Flutter Tip Calculator app.
+          
+          ### 📦 Downloads Available:
+          - **iOS Device Build**: For installation on physical iOS devices
+          - **iOS Simulator Build**: For testing in Xcode iOS Simulator
+          
+          ### 🛠️ Installation Requirements:
+          - macOS computer with Xcode installed
+          - iOS device in Developer Mode (for device installation)
+          - Apple Developer account (for App Store distribution)
+          
+          ### ✨ Features:
+          - Native iOS performance and design
+          - Real-time tip calculations
+          - Bill splitting functionality
+          - Modern Flutter Material Design UI
+          - Clipboard integration
+          
+          ### 📋 Installation Instructions:
+          Detailed installation instructions are included in each download package.
+          
+          ---
+          
+          **Built with Flutter 3.29.0 on GitHub Actions macOS runners**
+        draft: false
+        prerelease: false
+        token: ${{ secrets.GITHUB_TOKEN }}

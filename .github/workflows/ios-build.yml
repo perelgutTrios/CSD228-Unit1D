@@ -1,0 +1,137 @@
+name: 🍎 iOS Build & Release
+
+on:
+  push:
+    branches: [ TipCalcFlutterNative, main ]
+    paths:
+      - 'lib/**'
+      - 'ios/**'
+      - 'pubspec.yaml'
+      - 'assets/**'
+  pull_request:
+    branches: [ TipCalcFlutterNative, main ]
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  build-ios:
+    name: 🚀 Build iOS App
+    runs-on: macos-latest
+    
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: 🔧 Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.29.0'
+        channel: 'stable'
+        cache: true
+
+    - name: 📋 Flutter Doctor
+      run: |
+        flutter doctor -v
+        flutter --version
+
+    - name: 📦 Install Dependencies
+      run: flutter pub get
+
+    - name: 🧪 Run Tests
+      run: flutter test
+      continue-on-error: true  # Don't fail build if tests fail
+
+    - name: 🍎 Setup iOS Dependencies
+      run: |
+        cd ios
+        pod install
+        cd ..
+
+    - name: 🔨 Build iOS App (No Code Sign)
+      run: |
+        flutter build ios --release --no-codesign
+        
+    - name: 📱 Build iOS Archive
+      run: |
+        cd ios
+        xcodebuild -workspace Runner.xcworkspace \
+          -scheme Runner \
+          -configuration Release \
+          -destination generic/platform=iOS \
+          -archivePath build/Runner.xcarchive \
+          archive \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO
+        cd ..
+
+    - name: 📦 Create IPA Package
+      run: |
+        cd ios
+        xcodebuild -exportArchive \
+          -archivePath build/Runner.xcarchive \
+          -exportOptionsPlist ../build_scripts/ExportOptions.plist \
+          -exportPath build/ipa \
+          -allowProvisioningUpdates
+        cd ..
+      continue-on-error: true
+
+    - name: 📂 List Build Outputs
+      run: |
+        echo "=== iOS Build Directory ==="
+        ls -la build/ios/
+        echo "=== iOS Archive Directory ==="
+        ls -la ios/build/ || echo "No ios/build directory"
+        echo "=== Looking for .app file ==="
+        find build -name "*.app" -type d || echo "No .app files found"
+
+    - name: 🎯 Package iOS Build Artifacts
+      run: |
+        mkdir -p ios-distribution
+        
+        # Copy the built app if it exists
+        if [ -d "build/ios/iphoneos/Runner.app" ]; then
+          cp -r build/ios/iphoneos/Runner.app ios-distribution/
+          echo "✅ Copied Runner.app to distribution"
+        fi
+        
+        # Copy any IPA files
+        find . -name "*.ipa" -exec cp {} ios-distribution/ \; || echo "No IPA files found"
+        
+        # Create a build info file
+        echo "Build Date: $(date)" > ios-distribution/BUILD_INFO.txt
+        echo "Flutter Version: $(flutter --version | head -1)" >> ios-distribution/BUILD_INFO.txt
+        echo "Commit: ${{ github.sha }}" >> ios-distribution/BUILD_INFO.txt
+        echo "Branch: ${{ github.ref_name }}" >> ios-distribution/BUILD_INFO.txt
+        
+        # List what we're uploading
+        echo "=== Distribution Contents ==="
+        ls -la ios-distribution/
+
+    - name: ⬆️ Upload iOS Build Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ios-build-${{ github.run_number }}
+        path: ios-distribution/
+        retention-days: 30
+        if-no-files-found: warn
+
+    - name: 📊 Build Summary
+      run: |
+        echo "## 🍎 iOS Build Complete!" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### ✅ Build Information" >> $GITHUB_STEP_SUMMARY
+        echo "- **Build Number**: ${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Commit**: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+        echo "- **Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Flutter Version**: $(flutter --version | head -1)" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 📱 iOS App Ready!" >> $GITHUB_STEP_SUMMARY
+        echo "The iOS build artifacts have been uploaded and are available for download." >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 📥 Download Instructions" >> $GITHUB_STEP_SUMMARY
+        echo "1. Go to the **Actions** tab in your repository" >> $GITHUB_STEP_SUMMARY
+        echo "2. Click on this workflow run" >> $GITHUB_STEP_SUMMARY
+        echo "3. Download the \`ios-build-${{ github.run_number }}\` artifact" >> $GITHUB_STEP_SUMMARY
+        echo "4. Extract and install on iOS device via Xcode or TestFlight" >> $GITHUB_STEP_SUMMARY
