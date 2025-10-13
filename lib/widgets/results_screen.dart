@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 import '../models/tip_calculator_model.dart';
 import '../utils/currency_formatter.dart';
 
@@ -15,7 +14,7 @@ class ResultsScreen extends StatefulWidget {
 class _ResultsScreenState extends State<ResultsScreen> {
   final TextEditingController _tipController = TextEditingController();
 
-  void _shareTipCalculation(PaymentBreakdown breakdown) {
+  void _copyTipCalculation(PaymentBreakdown breakdown) {
     final text = '''
 💰 Tip Calculator Results
 
@@ -36,10 +35,12 @@ class _ResultsScreenState extends State<ResultsScreen> {
 Calculated with Flutter Tip Calculator
 ''';
 
-    Share.share(
-      text,
-      subject:
-          'Tip Calculator Results - ${CurrencyFormatter.format(breakdown.adjustedTotal)} total',
+    Clipboard.setData(ClipboardData(text: text));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Results copied to clipboard!'),
+        duration: Duration(seconds: 2),
+      ),
     );
   }
 
@@ -66,11 +67,11 @@ Calculated with Flutter Tip Calculator
               onPressed: () => model.goBackToInput(),
             ),
             actions: [
-              // Share button for mobile sharing
+              // Copy button for copying results
               IconButton(
-                icon: const Icon(Icons.share),
-                onPressed: () => _shareTipCalculation(breakdown),
-                tooltip: 'Share calculation',
+                icon: const Icon(Icons.copy),
+                onPressed: () => _copyTipCalculation(breakdown),
+                tooltip: 'Copy calculation',
               ),
             ],
           ),
