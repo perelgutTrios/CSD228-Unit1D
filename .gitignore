@@ -69,9 +69,20 @@ temp/
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
-.idea
+.idea/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# IntelliJ IDEA files
+*.iml
+.idea/
+*.ipr
+*.iws
+
+# Android Studio files
+*.aab
+*.apk
+local.properties

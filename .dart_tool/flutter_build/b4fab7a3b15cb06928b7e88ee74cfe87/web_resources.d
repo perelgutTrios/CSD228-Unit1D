@@ -1,1 +1,0 @@
- build\\web\\manifest.json:  C:\\xampp\\htdocs\\CSD228\ Fall\ 2025\\Unit\ 1D\\web\\index.html C:\\xampp\\htdocs\\CSD228\ Fall\ 2025\\Unit\ 1D\\web\\manifest.json
