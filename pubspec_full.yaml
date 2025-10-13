@@ -1,0 +1,45 @@
+name: tip_calculator_flutter
+description: A smart tip calculator with bill splitting and rounding, built with Flutter Web.
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # State management
+  provider: ^6.1.1
+  
+  # Math utilities
+  intl: ^0.19.0
+  
+  # Cross-platform URL launcher
+  url_launcher: ^6.2.2
+  
+  # Mobile-specific features
+  share_plus: ^7.2.1          # Share calculation results
+  flutter_launcher_icons: ^0.13.1  # Custom app icons
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  build_runner: ^2.4.7
+
+flutter:
+  uses-material-design: true
+  
+  # App icons and assets
+  assets:
+    - assets/icons/
+
+# App icon configuration
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icons/calculator-icon.svg"
+  min_sdk_android: 21
+  adaptive_icon_background: "#2C3E50"
+  adaptive_icon_foreground: "assets/icons/calculator-icon.svg"
