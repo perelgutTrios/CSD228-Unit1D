@@ -1,9 +1,0 @@
-@echo off
-echo Starting Simple Calculator Application...
-echo.
-echo Opening in browser via XAMPP...
-start "Simple Calculator" "http://localhost/CSD228%%20Fall%%202025/Unit%%201D/index.html"
-echo.
-echo Calculator launched! 
-echo Press any key to exit...
-pause >nul
