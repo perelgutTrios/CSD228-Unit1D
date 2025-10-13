@@ -67,13 +67,6 @@ class SmartRounding {
 
 /// Result of smart rounding calculation
 class SmartRoundingResult {
-  final double originalTotal;
-  final double roundedTotal;
-  final double originalTip;
-  final double adjustedTip;
-  final String roundingLevel;
-  final String roundingDescription;
-  final double difference;
   
   const SmartRoundingResult({
     required this.originalTotal,
@@ -84,6 +77,13 @@ class SmartRoundingResult {
     required this.roundingDescription,
     required this.difference,
   });
+  final double originalTotal;
+  final double roundedTotal;
+  final double originalTip;
+  final double adjustedTip;
+  final String roundingLevel;
+  final String roundingDescription;
+  final double difference;
   
   bool get wasRounded => difference.abs() > 0.01;
 }

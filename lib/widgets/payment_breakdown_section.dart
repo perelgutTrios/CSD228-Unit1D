@@ -164,7 +164,7 @@ class PaymentBreakdownSection extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF2ECC71).withOpacity(0.1),
+        color: const Color(0xFF2ECC71).withValues(alpha: 0.1),
         border: Border.all(color: const Color(0xFF2ECC71), width: 1),
         borderRadius: BorderRadius.circular(8),
       ),
@@ -234,7 +234,7 @@ class PaymentBreakdownSection extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF2ECC71).withOpacity(0.1),
+        color: const Color(0xFF2ECC71).withValues(alpha: 0.1),
         border: Border.all(color: const Color(0xFF2ECC71), width: 1),
         borderRadius: BorderRadius.circular(8),
       ),

@@ -105,11 +105,11 @@ Calculated with Flutter Tip Calculator
                         _buildAmountRow('Tax Amount:', breakdown.taxAmount),
                         const SizedBox(height: 8),
                         _buildAmountRow('Tip Amount:', breakdown.adjustedTip,
-                            isHighlight: true),
+                            isHighlight: true,),
                         const Divider(height: 32),
                         _buildAmountRow(
                             'Total Amount:', breakdown.adjustedTotal,
-                            isTotal: true),
+                            isTotal: true,),
 
                         const SizedBox(height: 24),
 
@@ -118,7 +118,7 @@ Calculated with Flutter Tip Calculator
                           width: double.infinity,
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF2ECC71).withOpacity(0.1),
+                            color: const Color(0xFF2ECC71).withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Column(
@@ -134,7 +134,7 @@ Calculated with Flutter Tip Calculator
                               const SizedBox(height: 8),
                               Text(
                                 CurrencyFormatter.format(
-                                    breakdown.roundedPerPerson),
+                                    breakdown.roundedPerPerson,),
                                 style: const TextStyle(
                                   fontSize: 32,
                                   fontWeight: FontWeight.bold,
@@ -188,10 +188,10 @@ Calculated with Flutter Tip Calculator
                               controller: _tipController,
                               keyboardType:
                                   const TextInputType.numberWithOptions(
-                                      decimal: true),
+                                      decimal: true,),
                               inputFormatters: [
                                 FilteringTextInputFormatter.allow(
-                                    RegExp(r'[0-9.]')),
+                                    RegExp(r'[0-9.]'),),
                               ],
                               decoration: const InputDecoration(
                                 labelText: 'Tip Amount',
@@ -212,15 +212,15 @@ Calculated with Flutter Tip Calculator
                                   child: ElevatedButton(
                                     onPressed: () {
                                       final amount = double.tryParse(
-                                              _tipController.text) ??
+                                              _tipController.text,) ??
                                           0.0;
                                       model.updateTipAmount(amount,
-                                          TipAdjustmentMode.tipPerPerson);
+                                          TipAdjustmentMode.tipPerPerson,);
                                     },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: const Color(0xFF2ECC71),
                                       padding: const EdgeInsets.symmetric(
-                                          vertical: 12),
+                                          vertical: 12,),
                                     ),
                                     child: const Text(
                                       'Tip Per\nPerson',
@@ -237,15 +237,15 @@ Calculated with Flutter Tip Calculator
                                   child: ElevatedButton(
                                     onPressed: () {
                                       final amount = double.tryParse(
-                                              _tipController.text) ??
+                                              _tipController.text,) ??
                                           0.0;
                                       model.updateTipAmount(
-                                          amount, TipAdjustmentMode.exactTip);
+                                          amount, TipAdjustmentMode.exactTip,);
                                     },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: const Color(0xFF3498DB),
                                       padding: const EdgeInsets.symmetric(
-                                          vertical: 12),
+                                          vertical: 12,),
                                     ),
                                     child: const Text(
                                       'Exact\nTip',
@@ -262,15 +262,15 @@ Calculated with Flutter Tip Calculator
                                   child: ElevatedButton(
                                     onPressed: () {
                                       final amount = double.tryParse(
-                                              _tipController.text) ??
+                                              _tipController.text,) ??
                                           0.0;
                                       model.updateTipAmount(
-                                          amount, TipAdjustmentMode.roundOut);
+                                          amount, TipAdjustmentMode.roundOut,);
                                     },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: const Color(0xFF9B59B6),
                                       padding: const EdgeInsets.symmetric(
-                                          vertical: 12),
+                                          vertical: 12,),
                                     ),
                                     child: const Text(
                                       'Round Out\nBill',
@@ -320,7 +320,7 @@ Calculated with Flutter Tip Calculator
   }
 
   Widget _buildAmountRow(String label, double amount,
-      {bool isTotal = false, bool isHighlight = false}) {
+      {bool isTotal = false, bool isHighlight = false,}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [

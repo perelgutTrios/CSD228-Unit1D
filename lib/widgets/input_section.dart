@@ -134,7 +134,7 @@ class _InputSectionState extends State<InputSection> {
             boxShadow: total > 0
                 ? [
                     BoxShadow(
-                      color: const Color(0xFF00FF41).withOpacity(0.3),
+                      color: const Color(0xFF00FF41).withValues(alpha: 0.3),
                       blurRadius: 8,
                       spreadRadius: 0,
                     ),
@@ -237,7 +237,7 @@ class _InputSectionState extends State<InputSection> {
             boxShadow: isSelected
                 ? [
                     BoxShadow(
-                      color: const Color(0xFF3498DB).withOpacity(0.4),
+                      color: const Color(0xFF3498DB).withValues(alpha: 0.4),
                       blurRadius: 8,
                       spreadRadius: 0,
                     ),

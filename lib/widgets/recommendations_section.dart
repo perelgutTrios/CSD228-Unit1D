@@ -49,7 +49,7 @@ class RecommendationsSection extends StatelessWidget {
                   ),
                 const SizedBox(height: 16),
                 ...model.recommendations.map((recommendation) =>
-                    _buildRecommendationCard(context, model, recommendation)),
+                    _buildRecommendationCard(context, model, recommendation),),
               ],
             ),
           ),
@@ -78,7 +78,7 @@ class RecommendationsSection extends StatelessWidget {
         boxShadow: isSelected
             ? [
                 BoxShadow(
-                  color: const Color(0xFF2ECC71).withOpacity(0.2),
+                  color: const Color(0xFF2ECC71).withValues(alpha: 0.2),
                   blurRadius: 12,
                   spreadRadius: 2,
                 ),
@@ -177,7 +177,7 @@ class RecommendationsSection extends StatelessWidget {
   }
 
   Widget _buildCustomRateInput(BuildContext context, TipCalculatorModel model) {
-    return Container(
+    return SizedBox(
       width: 120,
       child: Row(
         children: [
@@ -304,7 +304,7 @@ class RecommendationsSection extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 8),
-        Container(
+        SizedBox(
           width: 140,
           child: TextField(
             controller: controller,
